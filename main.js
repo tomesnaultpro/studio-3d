@@ -110,12 +110,12 @@ const deskObjectsList = [
     "object_4", "object_6"
 ];
 const deskData = {
-    title: "Bureau de Studio Professionnel",
-    desc: `Poste de travail ergonomique spécialement conçu pour la production musicale et le studio, offrant une surface stable pour accueillir les écrans, les contrôleurs et tout le matériel audio essentiel.<br><br>
-          <a href="https://www.amazon.fr/dp/B0CN3XC58B/" 
+    title: "Bureau double caisson noir Tikimob",
+    desc: `Bureau sur mesure robuste de couleur noire avec double caisson de rangement, idéal pour un setup de production propre, épuré et bien organisé.<br><br>
+          <a href="https://www.tikimob.fr/meubles-et-accessoires/tikimodeles/bureau_f/bureau-sur-mesure-double-caisson-couleur-noir/?gad_source=1&gad_campaignid=14724494636&gclid=Cj0KCQjwornRBhCrARIsAON5exHB3lFV8beacGWiKrjQ0UDpfZuUMZPnjaTgoB2TxBEYDY4qkhUdinAaAvt4EALw_wcB" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le produit sur Amazon ↗
+             Voir le produit sur Tikimob ↗
           </a>`
 };
 
@@ -160,7 +160,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio prêt avec le nouveau bureau !");
+        console.log("Studio mis à jour avec le lien Tikimob !");
     },
     undefined,
     (error) => {
