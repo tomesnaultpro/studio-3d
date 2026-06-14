@@ -117,7 +117,7 @@ const deskData = {
           </a>`
 };
 
-// --- F. LE CASQUE AUDIO (Génération automatique en minuscules pour éviter les fautes)
+// --- F. LE CASQUE AUDIO AirPods Max ---
 const rawHeadphoneObjects = [
     "sYukhlwqwHfYqZA", "TOVOhyqeZChyzGL", "ZCzOLIfJLVLCTmq", "WWtYjswGShSaNES", 
     "AANWpKMFljrFwQj", "AExPvRSHRbARooZ", "WWtYjswGShSaNES", "QVkyuxLuHiwiZGe", 
@@ -135,6 +135,20 @@ const headphoneData = {
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
              Voir le produit sur Apple ↗
+          </a>`
+};
+
+// --- G. LA BATTERIE (Pearl Roadshow) ---
+// Mots-clés structurels pour identifier tous les composants du zip (fûts, cymbales, pieds, cerclages)
+const drumKeywords = ["branco", "circle", "object_17", "object_18"];
+
+const drumData = {
+    title: "Pearl Roadshow 22\" Plus Jet Black",
+    desc: `Batterie acoustique complète de la série Roadshow, idéale pour les batteurs exigeants. Elle comprend des fûts robustes en peuplier, un accastillage complet et des cymbales pour un punch et une résonance remarquables au studio.<br><br>
+          <a href="https://www.thomann.fr/pearl_roadshow_22_plus_jet_black.htm?gad_source=1&gad_campaignid=1544038001&gclid=Cj0KCQjwornRBhCrARIsAON5exHpOQMgj_0FgzB6rgKyX7STbq3g1etN4JAWFiNKskSyCU7syJFgaa4aAjIhEALw_wcB" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir le produit sur Thomann ↗
           </a>`
 };
 
@@ -179,7 +193,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio prêt et liste du casque 100% blindée !");
+        console.log("Studio prêt avec la batterie Pearl Roadshow intégrée !");
     },
     undefined,
     (error) => {
@@ -221,6 +235,9 @@ function handleInteraction(clientX, clientY) {
                 break;
             } else if (headphoneObjectsList.some(item => nameLower.includes(item))) {
                 finalData = headphoneData;
+                break;
+            } else if (drumKeywords.some(keyword => nameLower.includes(keyword))) {
+                finalData = drumData;
                 break;
             }
             current = current.parent;
