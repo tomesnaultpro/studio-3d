@@ -117,7 +117,7 @@ const deskData = {
           </a>`
 };
 
-// --- F. LE CASQUE AUDIO ---
+// --- F. LE CASQUE AUDIO (Intégration stricte de l'intégralité de tes objets)
 const headphoneObjectsList = [
     "syukhlwqwhfyqza", "tovohyqezchyzgl", "zczolifjlvlctmq", "wwtyjswgshsanes", 
     "aanwpkmfljrwqj", "aexpvrshrbaarooz", "qvkyuxluhiwizge", "ygrsyuxvgxlggro", 
@@ -176,7 +176,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio chargé avec le casque AirPods Max !");
+        console.log("Studio prêt avec la configuration globale du casque !");
     },
     undefined,
     (error) => {
