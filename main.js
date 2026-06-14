@@ -139,10 +139,10 @@ const headphoneData = {
 };
 
 // --- G. LA BATTERIE (Pearl Roadshow) ---
-// Mots-clés exhaustifs tirés de l'arborescence complète du zip d'origine
+// Mots-clés enrichis avec TOUS les préfixes et structures d'objets du fichier gltf fourni
 const drumKeywords = [
     "branco", "circle", "prato", "peli", "hardware", "cymbal", "snare", "kick", 
-    "drum", "tom", "hihat", "crash", "ride", "pedal", "stands", "rim"
+    "drum", "tom", "hihat", "crash", "ride", "pedal", "stands", "rim", "object_"
 ];
 
 const drumData = {
@@ -155,13 +155,13 @@ const drumData = {
           </a>`
 };
 
-// Fonction de secours pour identifier si le nom "object_XXXX" appartient à la plage de la batterie
+// Fonction de secours améliorée pour identifier la plage numérique ou structurelle de la batterie
 function checkDrumByNumber(nameLower) {
     const match = nameLower.match(/object_(\d+)/);
     if (match) {
         const num = parseInt(match[1], 10);
-        // La batterie occupe toute la plage des numéros élevés de maillage au-dessus de 1700
-        return (num >= 1700 && num <= 2000);
+        // Prise en compte de toute l'arborescence des meshes du fichier de la batterie (y compris < 1700 si export global)
+        return (num >= 0 && num <= 2500); 
     }
     return false;
 }
@@ -251,6 +251,7 @@ function handleInteraction(clientX, clientY) {
                 finalData = headphoneData;
                 break;
             } else if (drumKeywords.some(keyword => nameLower.includes(keyword)) || checkDrumByNumber(nameLower)) {
+                // Tous les éléments du fichier gltf (Circle, BRANCO, Prato, object_xxxx) ouvrent désormais la batterie
                 finalData = drumData;
                 break;
             }
