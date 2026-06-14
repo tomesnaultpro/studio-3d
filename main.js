@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'; // <- AJOUTÉ : Le décompresseur
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
-// 1. Configuration de la Scène 3D
+// 1. Configuration du rendu et de la scène
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x1a1a1a);
 
@@ -19,7 +19,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 
-// 3. Lumières globales
+// 3. Lumières globales pour éclairer le studio
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
 scene.add(ambientLight);
 
@@ -27,7 +27,7 @@ const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
 dirLight.position.set(5, 10, 5);
 scene.add(dirLight);
 
-// 4. BASE DE DONNÉES DES INFOS
+// 4. BASE DE DONNÉES DES INFOS (Remplis-la ici au fur et à mesure)
 const equipmentsData = {
     "ExempleNomDeBlender": { 
         title: "Mon Équipement", 
@@ -35,17 +35,17 @@ const equipmentsData = {
     }
 };
 
-// 5. Configuration du chargeur avec le décompresseur DRACO
+// 5. Initialisation du chargeur et configuration du décompresseur DRACO
 const loader = new GLTFLoader();
-
-// 🚀 AJOUTÉ : On configure le décompresseur Draco officiel via le CDN de Google
 const dracoLoader = new DRACOLoader();
+
+// Lien vers le décompresseur officiel Google pour lire ton fichier compressé
 dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
 loader.setDRACOLoader(dracoLoader);
 
 let selectableObjects = [];
 
-// Chargement de ton fichier unique studio.glb
+// Chargement de ton modèle studio.glb
 loader.load(
     'studio.glb', 
     (gltf) => {
@@ -53,12 +53,13 @@ loader.load(
         scene.add(model);
         model.position.set(0, 0, 0);
 
+        // On mémorise la structure pour le clic
         model.traverse((child) => {
             if (child.isMesh) {
                 selectableObjects.push(child);
             }
         });
-        console.log("3D chargée avec succès grâce à Draco !");
+        console.log("3D chargée avec succès !");
     },
     undefined,
     (error) => {
@@ -82,7 +83,7 @@ window.addEventListener('click', (event) => {
     if (intersects.length > 0) {
         let hitObject = intersects[0].object;
 
-        // L'ESPION : L'alerte
+        // L'ESPION : L'alerte magique qui te donne le nom
         alert("Tu as cliqué sur l'objet nommé : " + hitObject.name);
 
         let foundData = null;
@@ -103,12 +104,12 @@ window.addEventListener('click', (event) => {
     }
 });
 
-// Fermeture de la popup
+// Fermeture de la popup d'infos
 document.getElementById('close-btn').addEventListener('click', () => {
     document.getElementById('info-box').style.display = 'none';
 });
 
-// 7. Boucle d'animation
+// 7. Boucle d'animation en continu
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
@@ -116,6 +117,7 @@ function animate() {
 }
 animate();
 
+// Redimensionnement automatique de la fenêtre
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
