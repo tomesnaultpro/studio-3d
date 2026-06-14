@@ -36,19 +36,21 @@ scene.add(camera);
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-// LISTE NOIRE STRICTE : Les objets de décor ignorés au clic
+// LISTE NOIRE STRICTE : Les objets de décor totalement ignorés au clic
 const ignoredObjects = ["fond_lateral", "sol", "cube001"];
 let selectableObjects = [];
 
-// 4. CORRESPONDANCE DES OBJETS POUR TES ENCEINTES KRK
+// =========================================================================
+// 4. LISTES DES OBJETS ET CONTENUS DE TON STUDIO
+// =========================================================================
+
+// --- A. ENCEINTES KRK ---
 const krkObjectsList = [
     "object_150", "object_151", "object_149", "object_152", "object_135", 
     "object_136", "object_137", "object_138", "object_136005", "object_135003", 
     "object_135004", "object_135006", "object_135007", "object_137007", 
     "object_136007", "object_138005", "object_138004", "object_137006"
 ];
-
-// Les infos textuelles propres qui vont s'injecter dans le HTML
 const krkData = {
     title: "KRK Classic 5 Monitor Pack",
     desc: `Enceintes de monitoring professionnelles actives de 5 pouces, idéales pour un rendu sonore ultra-précis lors du mixage et de la production musicale.<br><br>
@@ -58,6 +60,38 @@ const krkData = {
              Voir le produit sur Amazon ↗
           </a>`
 };
+
+// --- B. LE CANAPÉ ---
+const sofaObjectsList = [
+    "box009_gray_fabric_0", "line009_metall_0", "cylinder001_metall_0", 
+    "f-1910-5680_conforama_canap-lit_sienna_black_plastic_plas", "line010_metall_0", 
+    "line002_metall_0", "line001_metall_0"
+];
+const sofaData = {
+    title: "Canapé Convertible",
+    desc: `Un superbe canapé-lit confortable et au design épuré, parfait pour se détendre entre deux sessions d'enregistrement ou accueillir des artistes au studio.<br><br>
+          <a href="https://www.habitat.fr/c/canapes-convertibles?pid=122677&utm_source=google_shopping&utm_medium=cpc&utm_campaign=FR%20-%20FR%20-%20PLA%20-%20RECONDUITS&utm_content=FR%20-%20FR%20-%20PLA%20-%20RECONDUITS%20-%20Salon%20canape&utm_term=757540387378&utm_source_platform=Google&utm_creative_format=122677&utm_id=22656347250_179186089605_757540387378&gad_source=1&gad_campaignid=22656347250&gclid=Cj0KCQjwornRBhCrARIsAON5exGWrEtOfgxQeDsSel0Az9ueFKPX7lR6jbUt6pBTk0dkvfSfT7_Qtw8aAokvEALw_wcB" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir le produit sur Habitat ↗
+          </a>`
+};
+
+// --- C. LES COUSSINS ---
+const pillowObjectsList = [
+    "pillow_01_perl_fabric_0", "pillow_002_perl_fabric_0"
+];
+const pillowData = {
+    title: "Coussin olario orange",
+    desc: `Coussin en coton texture de dimensions 60x60 cm. Sa couleur orange vibrante apporte une touche chaleureuse, moderne et colorée au canapé du studio.<br><br>
+          <a href="https://www.maisonsdumonde.com/FR/fr/p/coussin-en-coton-texture-orange-60x60-olario-247807.htm?store=&utm_source=google&utm_medium=cpc&utm_campaign=SEA-GOO-B2C-INT-FR-FR-DCD-MDM-GEN-PMAX-HIGH-Deco&gad_source=1&gad_campaignid=22352879894&gclid=Cj0KCQjwornRBhCrARIsAON5exGXivwFaBj8qMgqGmcco-8Ap7woYY16QcP2yYV_hY778AWiKbaITg0aApbhEALw_wcB" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir le produit sur Maisons du Monde ↗
+          </a>`
+};
+
+// =========================================================================
 
 // 5. Chargement du modèle 3D
 const loader = new GLTFLoader();
@@ -98,7 +132,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio prêt avec les enceintes KRK !");
+        console.log("Studio prêt avec les Enceintes, le Canapé et les Coussins !");
     },
     undefined,
     (error) => {
@@ -117,32 +151,38 @@ function handleInteraction(clientX, clientY) {
     if (intersects.length > 0) {
         let hitObject = intersects[0].object;
         let current = hitObject;
-        let isKRK = false;
+        let finalData = null;
 
-        // On vérifie si l'objet cliqué ou un de ses parents directs est dans ta liste d'enceintes
+        // On remonte l'arborescence en forçant le tout en minuscules
         while (current && current !== scene) {
             let nameLower = current.name.toLowerCase();
+            
             if (krkObjectsList.includes(nameLower)) {
-                isKRK = true;
+                finalData = krkData;
+                break;
+            } else if (sofaObjectsList.includes(nameLower)) {
+                finalData = sofaData;
+                break;
+            } else if (pillowObjectsList.includes(nameLower)) {
+                finalData = pillowData;
                 break;
             }
             current = current.parent;
         }
 
         // Affichage dynamique dans le panneau latéral
-        if (isKRK) {
-            document.getElementById('info-title').innerText = krkData.title;
-            // On utilise innerHTML à la place de innerText pour que le lien Amazon s'affiche correctement
-            document.getElementById('info-description').innerHTML = krkData.desc;
+        if (finalData) {
+            document.getElementById('info-title').innerText = finalData.title;
+            document.getElementById('info-description').innerHTML = finalData.desc;
             document.getElementById('info-box').classList.add('active');
         } else {
-            // Pour les autres objets dont tu ne m'as pas encore donné le nom
+            // Pour les autres objets non configurés
             document.getElementById('info-title').innerText = "Élément du Studio";
-            document.getElementById('info-description').innerText = `Tu as cliqué sur l'objet "${hitObject.name}". Envoie-moi son vrai nom et son lien pour que je l'ajoute !`;
+            document.getElementById('info-description').innerText = `Tu as cliqué sur l'objet "${hitObject.name}". Donne-moi son nom et son lien marchand pour que je l'ajoute !`;
             document.getElementById('info-box').classList.add('active');
         }
     } else {
-        // Clic dans le vide ou sur un objet de la liste noire = fermeture du panel
+        // Clic sur le Sol, Fond_lateral ou dans le vide = fermeture automatique
         document.getElementById('info-box').classList.remove('active');
     }
 }
