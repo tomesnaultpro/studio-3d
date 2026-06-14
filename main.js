@@ -54,7 +54,7 @@ const krkObjectsList = [
 const krkData = {
     title: "KRK Classic 5 Monitor Pack",
     desc: `Enceintes de monitoring professionnelles actives de 5 pouces, idéales pour un rendu sonore ultra-précis lors du mixage et de la production musicale.<br><br>
-          <a href="https://www.amazon.fr/KRK-Classic-5-Monitor-Pack/dp/B0CN3XC58B/ref=asc_df_B0CN3XC58B?mcid=04736f897ceb346187c4db4ea99957cb&tag=googshopfr-21&linkCode=df0&hvadid=701508078423&hvpos=&hvnetw=g&hvrand=9223592458026554633&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9049781&hvtargid=pla-2270877372701&psc=1&hvocijid=9223592458026554633-B0CN3XC58B-&hvexpln=0" 
+          <a href="https://www.amazon.fr/KRK-Classic-5-Monitor-Pack/dp/B0CN3XC58B/" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
              Voir le produit sur Amazon ↗
@@ -70,7 +70,7 @@ const sofaObjectsList = [
 const sofaData = {
     title: "Canapé Convertible",
     desc: `Un superbe canapé-lit confortable et au design épuré, parfait pour se détendre entre deux sessions d'enregistrement ou accueillir des artistes au studio.<br><br>
-          <a href="https://www.habitat.fr/c/canapes-convertibles?pid=122677&utm_source=google_shopping&utm_medium=cpc&utm_campaign=FR%20-%20FR%20-%20PLA%20-%20RECONDUITS&utm_content=FR%20-%20FR%20-%20PLA%20-%20RECONDUITS%20-%20Salon%20canape&utm_term=757540387378&utm_source_platform=Google&utm_creative_format=122677&utm_id=22656347250_179186089605_757540387378&gad_source=1&gad_campaignid=22656347250&gclid=Cj0KCQjwornRBhCrARIsAON5exGWrEtOfgxQeDsSel0Az9ueFKPX7lR6jbUt6pBTk0dkvfSfT7_Qtw8aAokvEALw_wcB" 
+          <a href="https://www.habitat.fr/c/canapes-convertibles?pid=122677" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
              Voir le produit sur Habitat ↗
@@ -84,7 +84,7 @@ const pillowObjectsList = [
 const pillowData = {
     title: "Coussin olario orange",
     desc: `Coussin en coton texture de dimensions 60x60 cm. Sa couleur orange vibrante apporte une touche chaleureuse, moderne et colorée au canapé du studio.<br><br>
-          <a href="https://www.maisonsdumonde.com/FR/fr/p/coussin-en-coton-texture-orange-60x60-olario-247807.htm?store=&utm_source=google&utm_medium=cpc&utm_campaign=SEA-GOO-B2C-INT-FR-FR-DCD-MDM-GEN-PMAX-HIGH-Deco&gad_source=1&gad_campaignid=22352879894&gclid=Cj0KCQjwornRBhCrARIsAON5exGXivwFaBj8qMgqGmcco-8Ap7woYY16QcP2yYV_hY778AWiKbaITg0aApbhEALw_wcB" 
+          <a href="https://www.maisonsdumonde.com/FR/fr/p/coussin-en-coton-texture-orange-60x60-olario-247807.htm" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
              Voir le produit sur Maisons du Monde ↗
@@ -98,10 +98,24 @@ const chairObjectsList = [
 const chairData = {
     title: "Chaise de bureau Atlas",
     desc: `Siège de bureau professionnel ergonomique équipé d'un revêtement en tissu, d'accoudoirs réglables, d'un soutien lombaire et d'un mécanisme synchrone pour un confort optimal durant les longues heures de production.<br><br>
-          <a href="https://www.bruneau.fr/product/chaise-bureau-atlas-tissu-accoudoirs-soutien-lombaire-mecanisme-synchrone-reglage-profondeur-assise-pieds-noir/704754?references=704755&wish=FZ6&utm_term=704755&utm_content=5492559o.jmbpr$5629119o.jmbpr$5633320o.jmbpr$17406664o.jmbpr$&utm_content=&pricettc=true&realprice=true&add-media-profile=FPW&gsi=false&multipack=true&utm_campaign=Pmax_categorie_1&utm_source=google&utm_medium=cpc&utm_campaignid=22386504455&utm_contentid=&wiz_medium=cpc&wiz_source=google&wiz_campaign=22386504455&gad_source=1&gad_campaignid=22386513833&gclid=Cj0KCQjwornRBhCrARIsAON5exHIhEubXXKcirytnToYCJnhReS39oi3o4_Chn5qQSnx775URJZKdIAaAvHfEALw_wcB" 
+          <a href="https://www.bruneau.fr/product/chaise-bureau-atlas-tissu-accoudoirs-soutien-lombaire-mecanisme-synchrone-reglage-profondeur-assise-pieds-noir/704754?references=704755" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
              Voir le produit sur Bruneau ↗
+          </a>`
+};
+
+// --- E. LE BUREAU DE PRODUCTION ---
+const deskObjectsList = [
+    "object_4", "object_6"
+];
+const deskData = {
+    title: "Bureau de Studio Professionnel",
+    desc: `Poste de travail ergonomique spécialement conçu pour la production musicale et le studio, offrant une surface stable pour accueillir les écrans, les contrôleurs et tout le matériel audio essentiel.<br><br>
+          <a href="https://www.amazon.fr/dp/B0CN3XC58B/" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir le produit sur Amazon ↗
           </a>`
 };
 
@@ -146,7 +160,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio prêt avec la nouvelle chaise Atlas !");
+        console.log("Studio prêt avec le nouveau bureau !");
     },
     undefined,
     (error) => {
@@ -182,6 +196,9 @@ function handleInteraction(clientX, clientY) {
                 break;
             } else if (chairObjectsList.includes(nameLower)) {
                 finalData = chairData;
+                break;
+            } else if (deskObjectsList.includes(nameLower)) {
+                finalData = deskData;
                 break;
             }
             current = current.parent;
