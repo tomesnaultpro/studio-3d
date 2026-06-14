@@ -91,6 +91,20 @@ const pillowData = {
           </a>`
 };
 
+// --- D. LA CHAISE DE BUREAU ---
+const chairObjectsList = [
+    "chair_material_#25_0"
+];
+const chairData = {
+    title: "Chaise de bureau Atlas",
+    desc: `Siège de bureau professionnel ergonomique équipé d'un revêtement en tissu, d'accoudoirs réglables, d'un soutien lombaire et d'un mécanisme synchrone pour un confort optimal durant les longues heures de production.<br><br>
+          <a href="https://www.bruneau.fr/product/chaise-bureau-atlas-tissu-accoudoirs-soutien-lombaire-mecanisme-synchrone-reglage-profondeur-assise-pieds-noir/704754?references=704755&wish=FZ6&utm_term=704755&utm_content=5492559o.jmbpr$5629119o.jmbpr$5633320o.jmbpr$17406664o.jmbpr$&utm_content=&pricettc=true&realprice=true&add-media-profile=FPW&gsi=false&multipack=true&utm_campaign=Pmax_categorie_1&utm_source=google&utm_medium=cpc&utm_campaignid=22386504455&utm_contentid=&wiz_medium=cpc&wiz_source=google&wiz_campaign=22386504455&gad_source=1&gad_campaignid=22386513833&gclid=Cj0KCQjwornRBhCrARIsAON5exHIhEubXXKcirytnToYCJnhReS39oi3o4_Chn5qQSnx775URJZKdIAaAvHfEALw_wcB" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir le produit sur Bruneau ↗
+          </a>`
+};
+
 // =========================================================================
 
 // 5. Chargement du modèle 3D
@@ -132,7 +146,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio prêt avec les Enceintes, le Canapé et les Coussins !");
+        console.log("Studio prêt avec la nouvelle chaise Atlas !");
     },
     undefined,
     (error) => {
@@ -153,7 +167,7 @@ function handleInteraction(clientX, clientY) {
         let current = hitObject;
         let finalData = null;
 
-        // On remonte l'arborescence en forçant le tout en minuscules
+        // On remonte l'arborescence
         while (current && current !== scene) {
             let nameLower = current.name.toLowerCase();
             
@@ -166,6 +180,9 @@ function handleInteraction(clientX, clientY) {
             } else if (pillowObjectsList.includes(nameLower)) {
                 finalData = pillowData;
                 break;
+            } else if (chairObjectsList.includes(nameLower)) {
+                finalData = chairData;
+                break;
             }
             current = current.parent;
         }
@@ -176,13 +193,11 @@ function handleInteraction(clientX, clientY) {
             document.getElementById('info-description').innerHTML = finalData.desc;
             document.getElementById('info-box').classList.add('active');
         } else {
-            // Pour les autres objets non configurés
             document.getElementById('info-title').innerText = "Élément du Studio";
-            document.getElementById('info-description').innerText = `Tu as cliqué sur l'objet "${hitObject.name}". Donne-moi son nom et son lien marchand pour que je l'ajoute !`;
+            document.getElementById('info-description').innerText = `Tu as cliqué sur l'objet "${hitObject.name}". Envoie-moi son nom et son lien pour que je l'ajoute !`;
             document.getElementById('info-box').classList.add('active');
         }
     } else {
-        // Clic sur le Sol, Fond_lateral ou dans le vide = fermeture automatique
         document.getElementById('info-box').classList.remove('active');
     }
 }
