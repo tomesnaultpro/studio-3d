@@ -36,7 +36,7 @@ scene.add(camera);
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-// LISTE NOIRE STRICTE : Les objets de décor totalement ignorés au clic
+// LISTE NOIRE : Les objets de décor (sol, murs) totalement ignorés au clic
 const ignoredObjects = ["fond_lateral", "sol", "cube001"];
 let selectableObjects = [];
 
@@ -120,11 +120,10 @@ const deskData = {
 // --- F. LE CASQUE AUDIO AirPods Max ---
 const rawHeadphoneObjects = [
     "sYukhlwqwHfYqZA", "TOVOhyqeZChyzGL", "ZCzOLIfJLVLCTmq", "WWtYjswGShSaNES", 
-    "AANWpKMFljrFwQj", "AExPvRSHRbARooZ", "WWtYjswGShSaNES", "QVkyuxLuHiwiZGe", 
-    "YgRsyUXVGXLGGRO", "BNOZVCaFckcMAnz", "PNdaALJHbSHKuWS", "YmaGKZDKmTWUQJE", 
-    "BNOZVCaFckcMAnz", "WDmISGpfbmqrdOh", "FZPYptjpUzbYCJW", "XiPhiAhstHJZhhW", 
-    "lTnuLeUWbsqYabK", "sYTnpMcquiOFLQg", "sYukhlwqwHfYqZA", "BNOZVCaFckcMAnz", 
-    "WDmISGpfbmqrdOh", "eCeBBpFGKsspUio"
+    "AANWpKMFljrFwQj", "AExPvRSHRbARooZ", "QVkyuxLuHiwiZGe", "YgRsyUXVGXLGGRO", 
+    "BNOZVCaFckcMAnz", "PNdaALJHbSHKuWS", "YmaGKZDKmTWUQJE", "WDmISGpfbmqrdOh", 
+    "FZPYptjpUzbYCJW", "XiPhiAhstHJZhhW", "lTnuLeUWbsqYabK", "sYTnpMcquiOFLQg", 
+    "eCeBBpFGKsspUio"
 ];
 const headphoneObjectsList = rawHeadphoneObjects.map(name => name.toLowerCase().trim());
 
@@ -138,9 +137,7 @@ const headphoneData = {
           </a>`
 };
 
-// --- G. LA BATTERIE (Pearl Roadshow) ---
-const drumKeywords = ["branco", "circle", "prato", "peli"];
-
+// --- G. PANEL DE LA BATTERIE (Pearl Roadshow) ---
 const drumData = {
     title: "Pearl Roadshow 22\" Plus Jet Black",
     desc: `Batterie acoustique complète de la série Roadshow, idéale pour les batteurs exigeants. Elle comprend des fûts robustes en peuplier, un accastillage complet et des cymbales pour un punch et une résonance remarquables au studio.<br><br>
@@ -150,17 +147,6 @@ const drumData = {
              Voir le produit sur Thomann ↗
           </a>`
 };
-
-// Fonction permettant de vérifier si un maillage anonyme "object_xxxx" est un morceau de la batterie
-function isDrumMeshNumber(nameLower) {
-    const match = nameLower.match(/object_(\d+)/);
-    if (match) {
-        const num = parseInt(match[1], 10);
-        // La plage numérique haute isole parfaitement la batterie des objets bas du bureau
-        return (num >= 1700 && num <= 2000);
-    }
-    return false;
-}
 
 // =========================================================================
 
@@ -203,7 +189,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio chargé avec succès.");
+        console.log("Scène chargée. Détection optimisée batterie active !");
     },
     undefined,
     (error) => {
@@ -223,45 +209,49 @@ function handleInteraction(clientX, clientY) {
         let hitObject = intersects[0].object;
         let current = hitObject;
         let finalData = null;
+        let isKnownFurniture = false;
 
-        // On remonte l'arborescence pour trouver la bonne correspondance
+        // ÉTAPE 1 : On remonte la hiérarchie pour tester si on touche un meuble connu du studio
         while (current && current !== scene) {
             let nameLower = current.name.toLowerCase().trim();
             
-            if (krkObjectsList.some(item => nameLower.includes(item))) {
+            if (deskObjectsList.some(item => nameLower.includes(item))) {
+                finalData = deskData;
+                isKnownFurniture = true;
+                break;
+            } else if (krkObjectsList.some(item => nameLower.includes(item))) {
                 finalData = krkData;
+                isKnownFurniture = true;
                 break;
             } else if (sofaObjectsList.some(item => nameLower.includes(item))) {
                 finalData = sofaData;
+                isKnownFurniture = true;
                 break;
             } else if (pillowObjectsList.some(item => nameLower.includes(item))) {
                 finalData = pillowData;
+                isKnownFurniture = true;
                 break;
             } else if (chairObjectsList.some(item => nameLower.includes(item))) {
                 finalData = chairData;
-                break;
-            } else if (deskObjectsList.some(item => nameLower.includes(item))) {
-                finalData = deskData;
+                isKnownFurniture = true;
                 break;
             } else if (headphoneObjectsList.some(item => nameLower.includes(item))) {
                 finalData = headphoneData;
-                break;
-            } else if (drumKeywords.some(keyword => nameLower.includes(keyword)) || isDrumMeshNumber(nameLower)) {
-                // Détection sécurisée et complète de la batterie
-                finalData = drumData;
+                isKnownFurniture = true;
                 break;
             }
             current = current.parent;
         }
 
-        // Affichage dynamique dans le panneau latéral
+        // ÉTAPE 2 : Si ce n'est aucun des meubles ci-dessus, alors l'objet cliqué appartient à la batterie
+        if (!isKnownFurniture) {
+            finalData = drumData;
+        }
+
+        // Affichage dynamique dans le panneau HTML
         if (finalData) {
             document.getElementById('info-title').innerText = finalData.title;
             document.getElementById('info-description').innerHTML = finalData.desc;
-            document.getElementById('info-box').classList.add('active');
-        } else {
-            document.getElementById('info-title').innerText = "Élément du Studio";
-            document.getElementById('info-description').innerText = `Tu as cliqué sur l'objet "${hitObject.name}". Envoie-moi son nom et son lien pour que je l'ajoute !`;
             document.getElementById('info-box').classList.add('active');
         }
     } else {
