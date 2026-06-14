@@ -139,7 +139,7 @@ const headphoneData = {
 };
 
 // --- G. LA BATTERIE (Pearl Roadshow) ---
-// Mots-clés uniques identifiés dans la hiérarchie parente de ton fichier drum kit
+// Mots-clés réintroduits pour identifier à coup sûr les pièces de la batterie
 const drumKeywords = [
     "branco", "circle", "prato", "peli", "hardware", "cymbal", "snare", "kick", 
     "drum", "tom", "hihat", "crash", "ride", "pedal", "stands", "rim"
@@ -154,6 +154,18 @@ const drumData = {
              Voir le produit sur Thomann ↗
           </a>`
 };
+
+// Fonction de secours filtrant uniquement la plage numérique haute attribuée à la batterie
+function checkDrumByNumber(nameLower) {
+    const match = nameLower.match(/object_(\d+)/);
+    if (match) {
+        const num = parseInt(match[1], 10);
+        // Les maillages génériques de la batterie commencent à 1700 (ex: Object_1787, Object_1790)
+        // Les nombres bas inférieurs à 100 appartiennent aux autres meubles (bureau, etc.)
+        return (num >= 1700 && num <= 2000);
+    }
+    return false;
+}
 
 // =========================================================================
 
@@ -196,7 +208,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio chargé. Système de filtrage intelligent actif !");
+        console.log("Studio chargé. Sécurité d'isolation active pour la batterie et le bureau !");
     },
     undefined,
     (error) => {
@@ -217,34 +229,33 @@ function handleInteraction(clientX, clientY) {
         let current = hitObject;
         let finalData = null;
 
-        // ÉTAPE 1 : On vérifie en priorité absolue si le nom exact du Mesh ciblé appartient aux meubles connus
-        let hitNameLower = hitObject.name.toLowerCase().trim();
-        
-        if (deskObjectsList.some(item => hitNameLower === item)) {
-            finalData = deskData;
-        } else if (krkObjectsList.some(item => hitNameLower === item)) {
-            finalData = krkData;
-        } else if (sofaObjectsList.some(item => hitNameLower === item)) {
-            finalData = sofaData;
-        } else if (pillowObjectsList.some(item => hitNameLower === item)) {
-            finalData = pillowData;
-        } else if (chairObjectsList.some(item => hitNameLower === item)) {
-            finalData = chairData;
-        } else if (headphoneObjectsList.some(item => hitNameLower === item)) {
-            finalData = headphoneData;
-        }
-
-        // ÉTAPE 2 : Si ce n'est pas un meuble direct, on remonte l'arborescence parente pour identifier la batterie
-        if (!finalData) {
-            while (current && current !== scene) {
-                let nameLower = current.name.toLowerCase().trim();
-                
-                if (drumKeywords.some(keyword => nameLower.includes(keyword))) {
-                    finalData = drumData;
-                    break;
-                }
-                current = current.parent;
+        // On remonte l'arborescence pour trouver une correspondance souple
+        while (current && current !== scene) {
+            let nameLower = current.name.toLowerCase().trim();
+            
+            if (krkObjectsList.some(item => nameLower.includes(item))) {
+                finalData = krkData;
+                break;
+            } else if (sofaObjectsList.some(item => nameLower.includes(item))) {
+                finalData = sofaData;
+                break;
+            } else if (pillowObjectsList.some(item => nameLower.includes(item))) {
+                finalData = pillowData;
+                break;
+            } else if (chairObjectsList.some(item => nameLower.includes(item))) {
+                finalData = chairData;
+                break;
+            } else if (deskObjectsList.some(item => nameLower.includes(item))) {
+                finalData = deskData;
+                break;
+            } else if (headphoneObjectsList.some(item => nameLower.includes(item))) {
+                finalData = headphoneData;
+                break;
+            } else if (drumKeywords.some(keyword => nameLower.includes(keyword)) || checkDrumByNumber(nameLower)) {
+                finalData = drumData;
+                break;
             }
+            current = current.parent;
         }
 
         // Affichage dynamique dans le panneau latéral
