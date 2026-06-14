@@ -41,7 +41,7 @@ const ignoredObjects = ["fond_lateral", "sol", "cube001"];
 let selectableObjects = [];
 
 // =========================================================================
-// 4. LISTES DES OBJETS ET CONTENUS DE TON STUDIO (Tout en minuscules)
+// 4. LISTES DES OBJETS ET CONTENUS DE TON STUDIO
 // =========================================================================
 
 // --- A. ENCEINTES KRK ---
@@ -109,7 +109,7 @@ const deskObjectsList = [
 ];
 const deskData = {
     title: "Bureau double caisson noir Tikimob",
-    desc: `Bureau sur mesure robuste de couleur noire avec double caisson de rangement, idéal pour un setup de production propre, épuré et bien organized.<br><br>
+    desc: `Bureau sur mesure robuste de couleur noire avec double caisson de rangement, idéal pour un setup de production propre, épuré et bien organisé.<br><br>
           <a href="https://www.tikimob.fr/meubles-et-accessoires/tikimodeles/bureau_f/bureau-sur-mesure-double-caisson-couleur-noir/?gad_source=1&gad_campaignid=14724494636&gclid=Cj0KCQjwornRBhCrARIsAON5exHB3lFV8beacGWiKrjQ0UDpfZuUMZPnjaTgoB2TxBEYDY4qkhUdinAaAvt4EALw_wcB" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
@@ -117,14 +117,17 @@ const deskData = {
           </a>`
 };
 
-// --- F. LE CASQUE AUDIO (Avec AANWpKMFljrFwQj et AExPvRSHRbARooZ réparés)
-const headphoneObjectsList = [
-    "syukhlwqwhfyqza", "tovohyqezchyzgl", "zczolifjlvlctmq", "wwtyjswgshsanes", 
-    "aanwpkmfljrfwqj", "aexpvrshrbaarooz", "qvkyuxluhiwizge", "ygrsyuxvgxlggro", 
-    "bnozvcafckcmanz", "pndaaljhbshkuws", "ymagkzdkmtwuqje", "wdmisgpfbmqrdoh", 
-    "fzpyptjpuzbycjw", "xiphiahsthjzhhw", "ltnuleuwbsqyabk", "sytnpmcquioflqg", 
-    "ecebbpfgksspuio"
+// --- F. LE CASQUE AUDIO (Génération automatique en minuscules pour éviter les fautes)
+const rawHeadphoneObjects = [
+    "sYukhlwqwHfYqZA", "TOVOhyqeZChyzGL", "ZCzOLIfJLVLCTmq", "WWtYjswGShSaNES", 
+    "AANWpKMFljrFwQj", "AExPvRSHRbARooZ", "WWtYjswGShSaNES", "QVkyuxLuHiwiZGe", 
+    "YgRsyUXVGXLGGRO", "BNOZVCaFckcMAnz", "PNdaALJHbSHKuWS", "YmaGKZDKmTWUQJE", 
+    "BNOZVCaFckcMAnz", "WDmISGpfbmqrdOh", "FZPYptjpUzbYCJW", "XiPhiAhstHJZhhW", 
+    "lTnuLeUWbsqYabK", "sYTnpMcquiOFLQg", "sYukhlwqwHfYqZA", "BNOZVCaFckcMAnz", 
+    "WDmISGpfbmqrdOh", "eCeBBpFGKsspUio"
 ];
+const headphoneObjectsList = rawHeadphoneObjects.map(name => name.toLowerCase().trim());
+
 const headphoneData = {
     title: "AirPods Max",
     desc: `Casque audio sans fil circum-auriculaire Apple offrant une restitution sonore haute fidélité, une réduction active du bruit de pointe et un mode transparence immersif.<br><br>
@@ -176,7 +179,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio prêt !");
+        console.log("Studio prêt et liste du casque 100% blindée !");
     },
     undefined,
     (error) => {
