@@ -87,7 +87,6 @@ window.addEventListener('click', (event) => {
 
     if (intersects.length > 0) {
         let hitObject = intersects[0].object;
-
         alert("Tu as cliqué sur l'objet nommé : " + hitObject.name);
 
         let foundData = null;
@@ -120,10 +119,3 @@ function animate() {
     renderer.render(scene, camera);
 }
 animate();
-
-// Redimensionnement automatique de la fenêtre
-window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-});
