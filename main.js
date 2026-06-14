@@ -139,8 +139,11 @@ const headphoneData = {
 };
 
 // --- G. LA BATTERIE (Pearl Roadshow) ---
-// Mots-clés structurels pour identifier tous les composants du zip (fûts, cymbales, pieds, cerclages)
-const drumKeywords = ["branco", "circle", "object_17", "object_18"];
+// Mots-clés exhaustifs tirés de l'arborescence complète du zip d'origine
+const drumKeywords = [
+    "branco", "circle", "prato", "peli", "hardware", "cymbal", "snare", "kick", 
+    "drum", "tom", "hihat", "crash", "ride", "pedal", "stands", "rim"
+];
 
 const drumData = {
     title: "Pearl Roadshow 22\" Plus Jet Black",
@@ -151,6 +154,17 @@ const drumData = {
              Voir le produit sur Thomann ↗
           </a>`
 };
+
+// Fonction de secours pour identifier si le nom "object_XXXX" appartient à la plage de la batterie
+function checkDrumByNumber(nameLower) {
+    const match = nameLower.match(/object_(\d+)/);
+    if (match) {
+        const num = parseInt(match[1], 10);
+        // La batterie occupe toute la plage des numéros élevés de maillage au-dessus de 1700
+        return (num >= 1700 && num <= 2000);
+    }
+    return false;
+}
 
 // =========================================================================
 
@@ -193,7 +207,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio prêt avec la batterie Pearl Roadshow intégrée !");
+        console.log("Studio chargé. Sécurité intégrale activée pour la batterie !");
     },
     undefined,
     (error) => {
@@ -236,7 +250,7 @@ function handleInteraction(clientX, clientY) {
             } else if (headphoneObjectsList.some(item => nameLower.includes(item))) {
                 finalData = headphoneData;
                 break;
-            } else if (drumKeywords.some(keyword => nameLower.includes(keyword))) {
+            } else if (drumKeywords.some(keyword => nameLower.includes(keyword)) || checkDrumByNumber(nameLower)) {
                 finalData = drumData;
                 break;
             }
