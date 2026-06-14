@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Studio 3D Interactif</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+        }
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+        }
+        /* Fenêtre popup pour afficher les infos */
+        #info-box {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(30, 30, 30, 0.95);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 300px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border: 1px solid #444;
+            display: none;
+            z-index: 10;
+        }
+        #close-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-top: 15px;
+            width: 100%;
+        }
+    </style>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <div id="info-box">
+        <h2 id="info-title">Nom de l'objet</h2>
+        <p id="info-description">Description...</p>
+        <button id="close-btn">Fermer</button>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
