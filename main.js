@@ -14,7 +14,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-// 2. Configuration des contrôles (Rapides)
+// 2. Configuration des contrôles
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.1; 
@@ -41,7 +41,7 @@ const ignoredObjects = ["fond_lateral", "sol", "cube001"];
 let selectableObjects = [];
 
 // =========================================================================
-// 4. LISTES DES OBJETS ET CONTENUS DE TON STUDIO
+// 4. LISTES DES OBJETS ET CONTENUS DE TON STUDIO (Tout en minuscules)
 // =========================================================================
 
 // --- A. ENCEINTES KRK ---
@@ -63,9 +63,7 @@ const krkData = {
 
 // --- B. LE CANAPÉ ---
 const sofaObjectsList = [
-    "box009_gray_fabric_0", "line009_metall_0", "cylinder001_metall_0", 
-    "f-1910-5680_conforama_canap-lit_sienna_black_plastic_plas", "line010_metall_0", 
-    "line002_metall_0", "line001_metall_0"
+    "box009", "gray_fabric", "line009", "cylinder001", "sienna", "line010", "line002", "line001"
 ];
 const sofaData = {
     title: "Canapé Convertible",
@@ -79,7 +77,7 @@ const sofaData = {
 
 // --- C. LES COUSSINS ---
 const pillowObjectsList = [
-    "pillow_01_perl_fabric_0", "pillow_002_perl_fabric_0"
+    "pillow_01", "pillow_002"
 ];
 const pillowData = {
     title: "Coussin olario orange",
@@ -93,7 +91,7 @@ const pillowData = {
 
 // --- D. LA CHAISE DE BUREAU ---
 const chairObjectsList = [
-    "chair_material_#25_0"
+    "chair_material"
 ];
 const chairData = {
     title: "Chaise de bureau Atlas",
@@ -105,7 +103,7 @@ const chairData = {
           </a>`
 };
 
-// --- E. LE BUREAU DE PRODUCTION ---
+// --- E. LE BUREAU DE PRODUCTION (Sécurisé avec des portions de mots clés)
 const deskObjectsList = [
     "object_4", "object_6", "object_68", "object_69"
 ];
@@ -160,7 +158,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio prêt !");
+        console.log("Studio prêt et sécurisé !");
     },
     undefined,
     (error) => {
@@ -181,23 +179,23 @@ function handleInteraction(clientX, clientY) {
         let current = hitObject;
         let finalData = null;
 
-        // On remonte l'arborescence
+        // On remonte l'arborescence pour trouver une correspondance plus souple (.some et .includes)
         while (current && current !== scene) {
-            let nameLower = current.name.toLowerCase();
+            let nameLower = current.name.toLowerCase().trim();
             
-            if (krkObjectsList.includes(nameLower)) {
+            if (krkObjectsList.some(item => nameLower.includes(item))) {
                 finalData = krkData;
                 break;
-            } else if (sofaObjectsList.includes(nameLower)) {
+            } else if (sofaObjectsList.some(item => nameLower.includes(item))) {
                 finalData = sofaData;
                 break;
-            } else if (pillowObjectsList.includes(nameLower)) {
+            } else if (pillowObjectsList.some(item => nameLower.includes(item))) {
                 finalData = pillowData;
                 break;
-            } else if (chairObjectsList.includes(nameLower)) {
+            } else if (chairObjectsList.some(item => nameLower.includes(item))) {
                 finalData = chairData;
                 break;
-            } else if (deskObjectsList.includes(nameLower)) {
+            } else if (deskObjectsList.some(item => nameLower.includes(item))) {
                 finalData = deskData;
                 break;
             }
