@@ -36,11 +36,12 @@ scene.add(camera);
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-// Liste des maillages cliquables qui seront détectés par le Raycaster
+// LISTE NOIRE STRICTE : Les objets de décor totalement ignorés au clic
+const ignoredObjects = ["fond_lateral", "sol", "cube001"];
 let selectableObjects = [];
 
 // =========================================================================
-// 4. LISTES ET CONTENUS EXACTS DE TES OBJETS
+// 4. LISTES DES OBJETS ET CONTENUS DE TON STUDIO
 // =========================================================================
 
 // --- A. ENCEINTES KRK ---
@@ -137,9 +138,8 @@ const headphoneData = {
           </a>`
 };
 
-// --- G. LA BATTERIE (Mots-clés stricts basés sur ton fichier GLTF) ---
-// Utilise les préfixes précis des objets du mesh de la batterie (ex: BRANCO, Circle, object_1787, etc.)
-const drumKeywords = ["branco", "circle"]; 
+// --- G. LA BATTERIE (Pearl Roadshow) ---
+const drumKeywords = ["branco", "circle", "prato", "peli"];
 
 const drumData = {
     title: "Pearl Roadshow 22\" Plus Jet Black",
@@ -150,6 +150,17 @@ const drumData = {
              Voir le produit sur Thomann ↗
           </a>`
 };
+
+// Fonction permettant de vérifier si un maillage anonyme "object_xxxx" est un morceau de la batterie
+function isDrumMeshNumber(nameLower) {
+    const match = nameLower.match(/object_(\d+)/);
+    if (match) {
+        const num = parseInt(match[1], 10);
+        // La plage numérique haute isole parfaitement la batterie des objets bas du bureau
+        return (num >= 1700 && num <= 2000);
+    }
+    return false;
+}
 
 // =========================================================================
 
@@ -165,7 +176,7 @@ loader.load(
         const model = gltf.scene;
         scene.add(model);
 
-        // Centrage automatique du modèle
+        // Centrage automatique
         const box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
@@ -181,21 +192,26 @@ loader.load(
         camera.position.set(maxDim * 0.3, maxDim * 0.6, cameraZ);
         controls.target.set(0, 0, 0);
 
-        // Alimentation de la liste des maillages interactifs
+        // Tri des objets cliquables
         model.traverse((child) => {
             if (child.isMesh) {
-                selectableObjects.push(child);
+                const meshNameLower = child.name.toLowerCase();
+                const isIgnored = ignoredObjects.some(ignored => meshNameLower.includes(ignored));
+                
+                if (!isIgnored) {
+                    selectableObjects.push(child);
+                }
             }
         });
-        console.log("Studio chargé avec succès !");
+        console.log("Studio chargé avec succès.");
     },
     undefined,
     (error) => {
-        console.error("Erreur lors du chargement du fichier 3D :", error);
+        console.error("Erreur de chargement :", error);
     }
 );
 
-// 6. Détection et Gestion des Clics
+// 6. Détection des interactions (Clic / Tactile)
 function handleInteraction(clientX, clientY) {
     mouse.x = (clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(clientY / window.innerHeight) * 2 + 1;
@@ -205,44 +221,54 @@ function handleInteraction(clientX, clientY) {
 
     if (intersects.length > 0) {
         let hitObject = intersects[0].object;
+        let current = hitObject;
         let finalData = null;
 
-        // Récupération et nettoyage du nom de l'élément cliqué
-        let hitNameLower = hitObject.name.toLowerCase().trim();
-        
-        // CORRESPONDANCE EXACTE PAR LISTE D'OBJETS
-        if (deskObjectsList.some(item => hitNameLower.includes(item))) {
-            finalData = deskData;
-        } else if (krkObjectsList.some(item => hitNameLower.includes(item))) {
-            finalData = krkData;
-        } else if (sofaObjectsList.some(item => hitNameLower.includes(item))) {
-            finalData = sofaData;
-        } else if (pillowObjectsList.some(item => hitNameLower.includes(item))) {
-            finalData = pillowData;
-        } else if (chairObjectsList.some(item => hitNameLower.includes(item))) {
-            finalData = chairData;
-        } else if (headphoneObjectsList.some(item => hitNameLower.includes(item))) {
-            finalData = headphoneData;
-        } else if (drumKeywords.some(keyword => hitNameLower.includes(keyword))) {
-            // Détection stricte de la batterie si l'objet contient "branco" ou "circle"
-            finalData = drumData;
+        // On remonte l'arborescence pour trouver la bonne correspondance
+        while (current && current !== scene) {
+            let nameLower = current.name.toLowerCase().trim();
+            
+            if (krkObjectsList.some(item => nameLower.includes(item))) {
+                finalData = krkData;
+                break;
+            } else if (sofaObjectsList.some(item => nameLower.includes(item))) {
+                finalData = sofaData;
+                break;
+            } else if (pillowObjectsList.some(item => nameLower.includes(item))) {
+                finalData = pillowData;
+                break;
+            } else if (chairObjectsList.some(item => nameLower.includes(item))) {
+                finalData = chairData;
+                break;
+            } else if (deskObjectsList.some(item => nameLower.includes(item))) {
+                finalData = deskData;
+                break;
+            } else if (headphoneObjectsList.some(item => nameLower.includes(item))) {
+                finalData = headphoneData;
+                break;
+            } else if (drumKeywords.some(keyword => nameLower.includes(keyword)) || isDrumMeshNumber(nameLower)) {
+                // Détection sécurisée et complète de la batterie
+                finalData = drumData;
+                break;
+            }
+            current = current.parent;
         }
 
-        // Affichage des informations récoltées dans le volet HTML
+        // Affichage dynamique dans le panneau latéral
         if (finalData) {
             document.getElementById('info-title').innerText = finalData.title;
             document.getElementById('info-description').innerHTML = finalData.desc;
             document.getElementById('info-box').classList.add('active');
         } else {
-            // Optionnel : Masquer ou afficher un état neutre si on clique sur les murs/sol
-            document.getElementById('info-box').classList.remove('active');
+            document.getElementById('info-title').innerText = "Élément du Studio";
+            document.getElementById('info-description').innerText = `Tu as cliqué sur l'objet "${hitObject.name}". Envoie-moi son nom et son lien pour que je l'ajoute !`;
+            document.getElementById('info-box').classList.add('active');
         }
     } else {
         document.getElementById('info-box').classList.remove('active');
     }
 }
 
-// Écouteurs d'événements
 window.addEventListener('click', (event) => {
     if (event.target.closest('#info-box') || event.target.closest('.site-header')) return; 
     handleInteraction(event.clientX, event.clientY);
@@ -259,7 +285,7 @@ document.getElementById('close-btn').addEventListener('click', () => {
     document.getElementById('info-box').classList.remove('active');
 });
 
-// 7. Boucle de rendu d'animation
+// 7. Boucle d'animation
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
