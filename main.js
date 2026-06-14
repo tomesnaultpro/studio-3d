@@ -32,60 +32,65 @@ const cameraLight = new THREE.PointLight(0xffffff, 8.0, 100);
 camera.add(cameraLight);
 scene.add(camera);
 
-// 4. DICTIONNAIRE DES MATÉRIELS
-// Le code va chercher si l'un de ces mots est écrit dans le nom de l'objet OU de ses parents
+// 4. DICTIONNAIRE UNIQUE BASE SUR TON FICHIER STUDIO.GLB
 const equipmentsData = {
-    "drum": { 
-        title: "Batterie Acoustique", 
-        desc: "Une superbe batterie complète pour rythmer les morceaux du studio. Elle comprend les cymbales, la caisse claire, les toms, les pieds en métal et une grosse caisse imposante." 
+    // --- LE CANAPÉ (Tous ses composants Object_1136, 1137, etc.) ---
+    "object_1135": "sofa", "object_1136": "sofa", "object_1137": "sofa", "object_1138": "sofa",
+    "object_1139": "sofa", "object_1140": "sofa", "object_1141": "sofa", "object_1142": "sofa",
+    "object_1143": "sofa", "object_1144": "sofa",
+
+    // --- LA BATTERIE (Tous les fûts, cymbales et pieds métalliques) ---
+    "object_138": "drum", "object_139": "drum", "object_140": "drum", "object_141": "drum",
+    "object_144": "drum", "object_145": "drum", "object_146": "drum", "object_147": "drum",
+    "object_148": "drum", "object_153": "drum", "object_154": "drum", "object_157": "drum",
+    "object_158": "drum", "object_159": "drum", "object_164": "drum", "object_165": "drum",
+    "object_170": "drum", "object_171": "drum", "object_174": "drum", "object_175": "drum",
+    "object_176": "drum", "object_181": "drum", "object_182": "drum", "object_185": "drum",
+    "object_186": "drum", "object_187": "drum", "object_192": "drum", "object_193": "drum",
+    "object_202": "drum", "object_203": "drum", "object_204": "drum", "object_205": "drum",
+    "object_206": "drum", "object_211": "drum", "object_212": "drum", "object_215": "drum",
+    "object_216": "drum", "object_217": "drum", "object_222": "drum", "object_223": "drum",
+    "object_228": "drum", "object_229": "drum", "object_232": "drum", "object_233": "drum",
+    "object_234": "drum", "object_239": "drum", "object_240": "drum",
+
+    // --- LE BUREAU INFORMATIQUE (Écrans, Enceintes, Clavier) ---
+    "object_2": "desk", "object_3": "desk", "object_4": "desk", "object_5": "desk",
+    "object_402": "speaker", "object_403": "speaker", // Enceinte Gauche
+    "object_404": "speaker", "object_405": "speaker", // Enceinte Droite
+    "object_510": "keyboard", "object_511": "keyboard", "object_512": "keyboard", // Clavier maître
+    "object_700": "monitor", "object_701": "monitor", "object_702": "monitor", // Les écrans de contrôle
+    "object_88": "mic", "object_89": "mic" // Micro et son pied
+};
+
+// Les textes détaillés en français pour chaque catégorie
+const descriptionsData = {
+    "drum": {
+        title: "Batterie Acoustique",
+        desc: "Une superbe batterie complète pour rythmer les morceaux du studio. Elle comprend les cymbales, la caisse claire, les toms et une grosse caisse imposante."
     },
-    "sofa": { 
-        title: "Canapé Chill & Production", 
-        desc: "L'espace détente indispensable pour accueillir les artistes ou écouter confortablement les mixages finaux pendant les sessions d'enregistrement." 
+    "sofa": {
+        title: "Canapé Chill & Production",
+        desc: "L'espace détente indispensable pour accueillir les artistes ou écouter confortablement les mixages finaux pendant les sessions d'enregistrement."
     },
-    "couch": { 
-        title: "Canapé Chill & Production", 
-        desc: "L'espace détente indispensable pour accueillir les artistes ou écouter confortablement les mixages finaux pendant les sessions d'enregistrement." 
+    "speaker": {
+        title: "Enceintes de Monitoring",
+        desc: "Enceintes de haute précision configurées pour obtenir un rendu audio parfaitement neutre et professionnel lors de la phase de mixage."
     },
-    "canap": { 
-        title: "Canapé Chill & Production", 
-        desc: "L'espace détente indispensable pour accueillir les artistes ou écouter confortablement les mixages finaux pendant les sessions d'enregistrement." 
+    "monitor": {
+        title: "Poste de Travail / Écrans",
+        desc: "Configuration multi-écrans reliée à la station audio numérique (DAW) pour organiser les pistes de voix, les instruments virtuels et les effets de mixage."
     },
-    "speaker": { 
-        title: "Enceintes de Monitoring", 
-        desc: "Enceintes de haute précision configurées pour obtenir un rendu audio parfaitement neutre et professionnel lors de la phase de mixage." 
+    "desk": {
+        title: "Bureau de Production",
+        desc: "Meuble de studio ergonomique centralisant le clavier de contrôle, l'ordinateur de production et l'ensemble des contrôleurs matériels."
     },
-    "enceinte": { 
-        title: "Enceintes de Monitoring", 
-        desc: "Enceintes de haute précision configurées pour obtenir un rendu audio parfaitement neutre et professionnel lors de la phase de mixage." 
+    "keyboard": {
+        title: "Clavier Maître / Synthétiseur",
+        desc: "Clavier de contrôle MIDI permettant de jouer et de composer en temps réel tous les instruments virtuels (pianos, synthés, cordes) sur l'ordinateur."
     },
-    "monitor": { 
-        title: "Poste de Travail / Écrans", 
-        desc: "Configuration multi-écrans reliée à la station audio numérique (DAW) pour organiser les pistes de voix, les instruments virtuels et les effets de mixage." 
-    },
-    "ecran": { 
-        title: "Poste de Travail / Écrans", 
-        desc: "Configuration multi-écrans reliée à la station audio numérique (DAW) pour organiser les pistes de voix, les instruments virtuels et les effets de mixage." 
-    },
-    "desk": { 
-        title: "Bureau de Production", 
-        desc: "Meuble de studio ergonomique centralisant le clavier de contrôle, l'ordinateur de production et l'ensemble des contrôleurs matériels." 
-    },
-    "bureau": { 
-        title: "Bureau de Production", 
-        desc: "Meuble de studio ergonomique centralisant le clavier de contrôle, l'ordinateur de production et l'ensemble des contrôleurs matériels." 
-    },
-    "keyboard": { 
-        title: "Clavier Maître / Synthétiseur", 
-        desc: "Clavier de contrôle MIDI permettant de jouer et de composer en temps réel tous les instruments virtuels (pianos, synthés, cordes) sur l'ordinateur." 
-    },
-    "piano": { 
-        title: "Clavier Maître / Synthétiseur", 
-        desc: "Clavier de contrôle MIDI permettant de jouer et de composer en temps réel tous les instruments virtuels (pianos, synthés, cordes) sur l'ordinateur." 
-    },
-    "mic": { 
-        title: "Microphone de Studio", 
-        desc: "Micro professionnel monté sur pied pour enregistrer les voix, les instruments acoustiques ou les prises de son de proximité avec une clarté maximale." 
+    "mic": {
+        title: "Microphone de Studio",
+        desc: "Micro professionnel monté sur pied pour enregistrer les voix, les instruments acoustiques ou les prises de son de proximité avec une clarté maximale."
     }
 };
 
@@ -103,7 +108,6 @@ loader.load(
         const model = gltf.scene;
         scene.add(model);
 
-        // Centrage automatique et gestion de la taille
         const box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
@@ -128,7 +132,7 @@ loader.load(
                 selectableObjects.push(child);
             }
         });
-        console.log("Studio chargé !");
+        console.log("Studio de musique initialisé !");
     },
     undefined,
     (error) => {
@@ -136,7 +140,7 @@ loader.load(
     }
 );
 
-// 6. Détection intelligente des clics avec remontée des parents
+// 6. Détection intelligente des clics avec conversion des noms techniques
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
@@ -151,32 +155,40 @@ window.addEventListener('click', (event) => {
 
     if (intersects.length > 0) {
         let hitObject = intersects[0].object;
-        let foundData = null;
+        let finalData = null;
         let current = hitObject;
 
-        // On remonte le groupe d'objets (parents) pour voir si un des morceaux contient un nom connu
+        // On remonte l'objet cliqué ou ses parents pour trouver une correspondance
         while (current && current !== scene) {
-            let currentNameLower = current.name.toLowerCase();
+            let nameLower = current.name.toLowerCase();
             
-            for (const key in equipmentsData) {
-                if (currentNameLower.includes(key)) {
-                    foundData = equipmentsData[key];
+            // Étape A : Recherche par ID technique (ex: object_1136)
+            if (equipmentsData[nameLower]) {
+                const category = equipmentsData[nameLower];
+                finalData = descriptionsData[category];
+                break;
+            }
+            
+            // Étape B : Sécurité si le nom contient un mot-clé textuel
+            for (const key in descriptionsData) {
+                if (nameLower.includes(key)) {
+                    finalData = descriptionsData[key];
                     break;
                 }
             }
-            if (foundData) break;
-            current = current.parent; // On monte d'un niveau si on n'a rien trouvé
+            if (finalData) break;
+            current = current.parent;
         }
 
-        // Affichage des informations dans le menu latéral
-        if (foundData) {
-            document.getElementById('info-title').innerText = foundData.title;
-            document.getElementById('info-description').innerText = foundData.desc;
+        // Affichage des informations propres
+        if (finalData) {
+            document.getElementById('info-title').innerText = finalData.title;
+            document.getElementById('info-description').innerText = finalData.desc;
             document.getElementById('info-box').classList.add('active');
         } else {
-            // Si l'élément cliqué n'est pas dans la liste, on affiche son nom par défaut
-            document.getElementById('info-title').innerText = "Élément de la pièce";
-            document.getElementById('info-description').innerText = `Cet objet s'appelle "${hitObject.name}" dans ton projet 3D.`;
+            // Si on clique sur le sol blanc ou un mur non configuré
+            document.getElementById('info-title').innerText = "Structure du Studio";
+            document.getElementById('info-description').innerText = "Un élément de décor ou de structure de ton studio d'enregistrement.";
             document.getElementById('info-box').classList.add('active');
         }
     }
