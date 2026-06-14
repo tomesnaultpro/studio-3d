@@ -105,7 +105,7 @@ const chairData = {
           </a>`
 };
 
-// --- E. LE BUREAU DE PRODUCTION ---
+// --- E. LE BUREAU DE PRODUCTION (Ton lien Tikimob !)
 const deskObjectsList = [
     "object_4", "object_6"
 ];
@@ -160,7 +160,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio mis à jour avec le lien Tikimob !");
+        console.log("Studio prêt avec ton lien Tikimob !");
     },
     undefined,
     (error) => {
