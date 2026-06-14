@@ -7,17 +7,22 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x1a1a1a);
 
+// On commence avec une caméra un peu plus reculée (z: 20) pour éviter l'effet hyper-zoomé
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 5, 10); 
+camera.position.set(0, 8, 20); 
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
+// On s'assure que le rendu s'aligne bien sur les pixels de l'écran
+renderer.setPixelRatio(window.devicePixelRatio);
 document.getElementById('canvas-container').appendChild(renderer.domElement);
 
 // 2. Mouvements de caméra (Orbit Controls)
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
+controls.maxDistance = 100; // Évite de pouvoir reculer à l'infini dans le vide
+controls.minDistance = 2;   // Évite de trop zoomer à l'intérieur des objets
 
 // 3. Lumières globales (Boostées)
 const ambientLight = new THREE.AmbientLight(0xffffff, 4.0); 
@@ -56,7 +61,7 @@ loader.load(
         scene.add(model);
         model.position.set(0, 0, 0);
 
-        camera.lookAt(model.position);
+        // Ajuster automatiquement les contrôles sur le modèle
         controls.target.set(0, 0, 0);
 
         model.traverse((child) => {
@@ -119,3 +124,12 @@ function animate() {
     renderer.render(scene, camera);
 }
 animate();
+
+// 8. CORRIGÉ : Gestion propre du redimensionnement plein écran sans crash
+window.addEventListener('resize', onWindowResize, false);
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
