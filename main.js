@@ -160,7 +160,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio prêt avec le bureau étendu !");
+        console.log("Studio prêt !");
     },
     undefined,
     (error) => {
