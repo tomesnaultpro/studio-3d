@@ -139,10 +139,10 @@ const headphoneData = {
 };
 
 // --- G. LA BATTERIE (Pearl Roadshow) ---
-// Mots-clés enrichis avec TOUS les préfixes et structures d'objets du fichier gltf fourni
+// Mots-clés uniques identifiés dans la hiérarchie parente de ton fichier drum kit
 const drumKeywords = [
     "branco", "circle", "prato", "peli", "hardware", "cymbal", "snare", "kick", 
-    "drum", "tom", "hihat", "crash", "ride", "pedal", "stands", "rim", "object_"
+    "drum", "tom", "hihat", "crash", "ride", "pedal", "stands", "rim"
 ];
 
 const drumData = {
@@ -154,17 +154,6 @@ const drumData = {
              Voir le produit sur Thomann ↗
           </a>`
 };
-
-// Fonction de secours améliorée pour identifier la plage numérique ou structurelle de la batterie
-function checkDrumByNumber(nameLower) {
-    const match = nameLower.match(/object_(\d+)/);
-    if (match) {
-        const num = parseInt(match[1], 10);
-        // Prise en compte de toute l'arborescence des meshes du fichier de la batterie (y compris < 1700 si export global)
-        return (num >= 0 && num <= 2500); 
-    }
-    return false;
-}
 
 // =========================================================================
 
@@ -207,7 +196,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio chargé. Sécurité intégrale activée pour la batterie !");
+        console.log("Studio chargé. Système de filtrage intelligent actif !");
     },
     undefined,
     (error) => {
@@ -228,34 +217,34 @@ function handleInteraction(clientX, clientY) {
         let current = hitObject;
         let finalData = null;
 
-        // On remonte l'arborescence pour trouver une correspondance souple
-        while (current && current !== scene) {
-            let nameLower = current.name.toLowerCase().trim();
-            
-            if (krkObjectsList.some(item => nameLower.includes(item))) {
-                finalData = krkData;
-                break;
-            } else if (sofaObjectsList.some(item => nameLower.includes(item))) {
-                finalData = sofaData;
-                break;
-            } else if (pillowObjectsList.some(item => nameLower.includes(item))) {
-                finalData = pillowData;
-                break;
-            } else if (chairObjectsList.some(item => nameLower.includes(item))) {
-                finalData = chairData;
-                break;
-            } else if (deskObjectsList.some(item => nameLower.includes(item))) {
-                finalData = deskData;
-                break;
-            } else if (headphoneObjectsList.some(item => nameLower.includes(item))) {
-                finalData = headphoneData;
-                break;
-            } else if (drumKeywords.some(keyword => nameLower.includes(keyword)) || checkDrumByNumber(nameLower)) {
-                // Tous les éléments du fichier gltf (Circle, BRANCO, Prato, object_xxxx) ouvrent désormais la batterie
-                finalData = drumData;
-                break;
+        // ÉTAPE 1 : On vérifie en priorité absolue si le nom exact du Mesh ciblé appartient aux meubles connus
+        let hitNameLower = hitObject.name.toLowerCase().trim();
+        
+        if (deskObjectsList.some(item => hitNameLower === item)) {
+            finalData = deskData;
+        } else if (krkObjectsList.some(item => hitNameLower === item)) {
+            finalData = krkData;
+        } else if (sofaObjectsList.some(item => hitNameLower === item)) {
+            finalData = sofaData;
+        } else if (pillowObjectsList.some(item => hitNameLower === item)) {
+            finalData = pillowData;
+        } else if (chairObjectsList.some(item => hitNameLower === item)) {
+            finalData = chairData;
+        } else if (headphoneObjectsList.some(item => hitNameLower === item)) {
+            finalData = headphoneData;
+        }
+
+        // ÉTAPE 2 : Si ce n'est pas un meuble direct, on remonte l'arborescence parente pour identifier la batterie
+        if (!finalData) {
+            while (current && current !== scene) {
+                let nameLower = current.name.toLowerCase().trim();
+                
+                if (drumKeywords.some(keyword => nameLower.includes(keyword))) {
+                    finalData = drumData;
+                    break;
+                }
+                current = current.parent;
             }
-            current = current.parent;
         }
 
         // Affichage dynamique dans le panneau latéral
