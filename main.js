@@ -14,11 +14,12 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-// 2. Configuration des contrôles
+// 2. Configuration des contrôles (Boostés pour la vitesse et le tactile)
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.zoomSpeed = 0.6;
+controls.dampingFactor = 0.1; // Plus réactif (de 0.05 à 0.1)
+controls.zoomSpeed = 1.8;     // Zoom beaucoup plus rapide (de 0.6 à 1.8)
+controls.rotateSpeed = 1.5;   // Rotation plus rapide de la caméra
 
 // 3. Lumières globales puissantes
 const ambientLight = new THREE.AmbientLight(0xffffff, 3.5); 
@@ -32,67 +33,14 @@ const cameraLight = new THREE.PointLight(0xffffff, 8.0, 100);
 camera.add(cameraLight);
 scene.add(camera);
 
-// 4. DICTIONNAIRE UNIQUE BASE SUR TON FICHIER STUDIO.GLB
-const equipmentsData = {
-    // --- LE CANAPÉ (Tous ses composants Object_1136, 1137, etc.) ---
-    "object_1135": "sofa", "object_1136": "sofa", "object_1137": "sofa", "object_1138": "sofa",
-    "object_1139": "sofa", "object_1140": "sofa", "object_1141": "sofa", "object_1142": "sofa",
-    "object_1143": "sofa", "object_1144": "sofa",
-
-    // --- LA BATTERIE (Tous les fûts, cymbales et pieds métalliques) ---
-    "object_138": "drum", "object_139": "drum", "object_140": "drum", "object_141": "drum",
-    "object_144": "drum", "object_145": "drum", "object_146": "drum", "object_147": "drum",
-    "object_148": "drum", "object_153": "drum", "object_154": "drum", "object_157": "drum",
-    "object_158": "drum", "object_159": "drum", "object_164": "drum", "object_165": "drum",
-    "object_170": "drum", "object_171": "drum", "object_174": "drum", "object_175": "drum",
-    "object_176": "drum", "object_181": "drum", "object_182": "drum", "object_185": "drum",
-    "object_186": "drum", "object_187": "drum", "object_192": "drum", "object_193": "drum",
-    "object_202": "drum", "object_203": "drum", "object_204": "drum", "object_205": "drum",
-    "object_206": "drum", "object_211": "drum", "object_212": "drum", "object_215": "drum",
-    "object_216": "drum", "object_217": "drum", "object_222": "drum", "object_223": "drum",
-    "object_228": "drum", "object_229": "drum", "object_232": "drum", "object_233": "drum",
-    "object_234": "drum", "object_239": "drum", "object_240": "drum",
-
-    // --- LE BUREAU INFORMATIQUE (Écrans, Enceintes, Clavier) ---
-    "object_2": "desk", "object_3": "desk", "object_4": "desk", "object_5": "desk",
-    "object_402": "speaker", "object_403": "speaker", // Enceinte Gauche
-    "object_404": "speaker", "object_405": "speaker", // Enceinte Droite
-    "object_510": "keyboard", "object_511": "keyboard", "object_512": "keyboard", // Clavier maître
-    "object_700": "monitor", "object_701": "monitor", "object_702": "monitor", // Les écrans de contrôle
-    "object_88": "mic", "object_89": "mic" // Micro et son pied
-};
-
-// Les textes détaillés en français pour chaque catégorie
+// 4. DICTIONNAIRE DE BASE (En attente de tes vrais noms !)
 const descriptionsData = {
-    "drum": {
-        title: "Batterie Acoustique",
-        desc: "Une superbe batterie complète pour rythmer les morceaux du studio. Elle comprend les cymbales, la caisse claire, les toms et une grosse caisse imposante."
-    },
-    "sofa": {
-        title: "Canapé Chill & Production",
-        desc: "L'espace détente indispensable pour accueillir les artistes ou écouter confortablement les mixages finaux pendant les sessions d'enregistrement."
-    },
-    "speaker": {
-        title: "Enceintes de Monitoring",
-        desc: "Enceintes de haute précision configurées pour obtenir un rendu audio parfaitement neutre et professionnel lors de la phase de mixage."
-    },
-    "monitor": {
-        title: "Poste de Travail / Écrans",
-        desc: "Configuration multi-écrans reliée à la station audio numérique (DAW) pour organiser les pistes de voix, les instruments virtuels et les effets de mixage."
-    },
-    "desk": {
-        title: "Bureau de Production",
-        desc: "Meuble de studio ergonomique centralisant le clavier de contrôle, l'ordinateur de production et l'ensemble des contrôleurs matériels."
-    },
-    "keyboard": {
-        title: "Clavier Maître / Synthétiseur",
-        desc: "Clavier de contrôle MIDI permettant de jouer et de composer en temps réel tous les instruments virtuels (pianos, synthés, cordes) sur l'ordinateur."
-    },
-    "mic": {
-        title: "Microphone de Studio",
-        desc: "Micro professionnel monté sur pied pour enregistrer les voix, les instruments acoustiques ou les prises de son de proximité avec une clarté maximale."
-    }
+    "sofa": { title: "Canapé", desc: "Espace détente du studio." },
+    "drum": { title: "Batterie", desc: "Batterie acoustique complète." }
 };
+
+// LISTE NOIRE : Les objets à ignorer totalement lors d'un clic
+const ignoredObjects = ["fond_lateral", "sol", "cube001"];
 
 // 5. Chargement 3D et Centrage Automatique
 const loader = new GLTFLoader();
@@ -108,6 +56,7 @@ loader.load(
         const model = gltf.scene;
         scene.add(model);
 
+        // Centrage automatique basé sur la taille du studio
         const box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
@@ -120,7 +69,7 @@ loader.load(
         const fov = camera.fov * (Math.PI / 180);
         let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
         
-        cameraZ *= 1.6; 
+        cameraZ *= 1.5; 
         camera.position.set(maxDim * 0.3, maxDim * 0.6, cameraZ);
         
         controls.target.set(0, 0, 0);
@@ -129,10 +78,16 @@ loader.load(
 
         model.traverse((child) => {
             if (child.isMesh) {
-                selectableObjects.push(child);
+                // On n'ajoute pas à la liste des objets cliquables s'ils sont dans la liste noire
+                const meshNameLower = child.name.toLowerCase();
+                const isIgnored = ignoredObjects.some(ignored => meshNameLower.includes(ignored));
+                
+                if (!isIgnored) {
+                    selectableObjects.push(child);
+                }
             }
         });
-        console.log("Studio de musique initialisé !");
+        console.log("Studio mobile & rapide initialisé !");
     },
     undefined,
     (error) => {
@@ -140,15 +95,10 @@ loader.load(
     }
 );
 
-// 6. Détection intelligente des clics avec conversion des noms techniques
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-
-window.addEventListener('click', (event) => {
-    if (event.target.closest('#info-box') || event.target.closest('.site-header')) return; 
-
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+// 6. Détection des clics (Gère le clic souris + le toucher tactile)
+function handleInteraction(clientX, clientY) {
+    mouse.x = (clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(clientY / window.innerHeight) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(selectableObjects);
@@ -158,18 +108,10 @@ window.addEventListener('click', (event) => {
         let finalData = null;
         let current = hitObject;
 
-        // On remonte l'objet cliqué ou ses parents pour trouver une correspondance
+        // Remontée des parents pour l'identification
         while (current && current !== scene) {
             let nameLower = current.name.toLowerCase();
             
-            // Étape A : Recherche par ID technique (ex: object_1136)
-            if (equipmentsData[nameLower]) {
-                const category = equipmentsData[nameLower];
-                finalData = descriptionsData[category];
-                break;
-            }
-            
-            // Étape B : Sécurité si le nom contient un mot-clé textuel
             for (const key in descriptionsData) {
                 if (nameLower.includes(key)) {
                     finalData = descriptionsData[key];
@@ -180,17 +122,37 @@ window.addEventListener('click', (event) => {
             current = current.parent;
         }
 
-        // Affichage des informations propres
         if (finalData) {
             document.getElementById('info-title').innerText = finalData.title;
             document.getElementById('info-description').innerText = finalData.desc;
             document.getElementById('info-box').classList.add('active');
         } else {
-            // Si on clique sur le sol blanc ou un mur non configuré
-            document.getElementById('info-title').innerText = "Structure du Studio";
-            document.getElementById('info-description').innerText = "Un élément de décor ou de structure de ton studio d'enregistrement.";
+            // Si l'objet n'a pas encore sa description personnalisée
+            document.getElementById('info-title').innerText = "Élément du Studio";
+            document.getElementById('info-description').innerText = `Cet objet porte le nom technique "${hitObject.name}".`;
             document.getElementById('info-box').classList.add('active');
         }
+    } else {
+        // Si on clique dans le vide (ou sur un objet ignoré), on ferme la box
+        document.getElementById('info-box').classList.remove('active');
+    }
+}
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+// Écouteur pour la souris
+window.addEventListener('click', (event) => {
+    if (event.target.closest('#info-box') || event.target.closest('.site-header')) return; 
+    handleInteraction(event.clientX, event.clientY);
+});
+
+// Écouteur pour les écrans tactiles (Téléphone / Tablette)
+window.addEventListener('touchend', (event) => {
+    if (event.target.closest('#info-box') || event.target.closest('.site-header')) return;
+    // Empêche le déclenchement de clics fantômes
+    if (event.changedTouches.length > 0) {
+        handleInteraction(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
     }
 });
 
@@ -198,7 +160,7 @@ document.getElementById('close-btn').addEventListener('click', () => {
     document.getElementById('info-box').classList.remove('active');
 });
 
-// 7. Animation
+// 7. Boucle d'animation
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
