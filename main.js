@@ -107,7 +107,7 @@ const chairData = {
 
 // --- E. LE BUREAU DE PRODUCTION ---
 const deskObjectsList = [
-    "object_4", "object_6"
+    "object_4", "object_6", "object_68", "object_69"
 ];
 const deskData = {
     title: "Bureau double caisson noir Tikimob",
@@ -160,7 +160,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio prêt avec les modifications du bureau !");
+        console.log("Studio prêt avec le bureau étendu !");
     },
     undefined,
     (error) => {
