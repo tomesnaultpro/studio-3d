@@ -105,7 +105,7 @@ const chairData = {
           </a>`
 };
 
-// --- E. LE BUREAU DE PRODUCTION (Ton lien Tikimob !)
+// --- E. LE BUREAU DE PRODUCTION ---
 const deskObjectsList = [
     "object_4", "object_6"
 ];
@@ -115,7 +115,7 @@ const deskData = {
           <a href="https://www.tikimob.fr/meubles-et-accessoires/tikimodeles/bureau_f/bureau-sur-mesure-double-caisson-couleur-noir/?gad_source=1&gad_campaignid=14724494636&gclid=Cj0KCQjwornRBhCrARIsAON5exHB3lFV8beacGWiKrjQ0UDpfZuUMZPnjaTgoB2TxBEYDY4qkhUdinAaAvt4EALw_wcB" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le produit sur Tikimob ↗
+             Voir le produit sur tikimob
           </a>`
 };
 
@@ -160,7 +160,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio prêt avec ton lien Tikimob !");
+        console.log("Studio prêt avec les modifications du bureau !");
     },
     undefined,
     (error) => {
