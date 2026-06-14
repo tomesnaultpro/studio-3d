@@ -117,13 +117,14 @@ const deskData = {
           </a>`
 };
 
-// --- F. LE CASQUE AUDIO (Intégration stricte de l'intégralité de tes objets)
+// --- F. LE CASQUE AUDIO (Tous tes objets exacts intégrés)
 const headphoneObjectsList = [
     "syukhlwqwhfyqza", "tovohyqezchyzgl", "zczolifjlvlctmq", "wwtyjswgshsanes", 
-    "aanwpkmfljrwqj", "aexpvrshrbaarooz", "qvkyuxluhiwizge", "ygrsyuxvgxlggro", 
-    "bnozvcafckcanz", "pndaaljhbshkuws", "ymagkzdkmtwuqje", "wdmisgpfbmqrdoh", 
-    "fzpyptjpuzbycjw", "xipiahsthjzhhww", "ltnuleuwbsqyabk", "sytnpmcquioflqg", 
-    "ecebbpfgksspuio"
+    "aanwpkmfljrwqj", "aexpvrshrbaarooz", "wwtyjswgshsanes", "qvkyuxluhiwizge", 
+    "ygrsyuxvgxlggro", "bnozvcafckcmanz", "pndaaljhbshkuws", "ymagkzdkmtwuqje", 
+    "bnozvcafckcmanz", "wdmisgpfbmqrdoh", "fzpyptjpuzbycjw", "xiphiahsthjzhhw", 
+    "ltnuleuwbsqyabk", "sytnpmcquioflqg", "syukhlwqwhfyqza", "bnozvcafckcmanz", 
+    "wdmisgpfbmqrdoh", "ecebbpfgksspuio"
 ];
 const headphoneData = {
     title: "AirPods Max",
@@ -176,7 +177,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio prêt avec la configuration globale du casque !");
+        console.log("Studio prêt avec la liste complète du casque !");
     },
     undefined,
     (error) => {
