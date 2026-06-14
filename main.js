@@ -1,13 +1,14 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'; // <- AJOUTÉ : Le décompresseur
 
 // 1. Configuration de la Scène 3D
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x1a1a1a);
 
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 4, 8); // Position de la caméra (x, y, z)
+camera.position.set(0, 4, 8); 
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -19,14 +20,14 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 
 // 3. Lumières globales
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
 scene.add(ambientLight);
 
 const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
 dirLight.position.set(5, 10, 5);
 scene.add(dirLight);
 
-// 4. BASE DE DONNÉES DES INFOS (Tu la rempliras ici grâce aux alertes)
+// 4. BASE DE DONNÉES DES INFOS
 const equipmentsData = {
     "ExempleNomDeBlender": { 
         title: "Mon Équipement", 
@@ -34,10 +35,17 @@ const equipmentsData = {
     }
 };
 
-// 5. Chargement de ton fichier unique studio.glb
+// 5. Configuration du chargeur avec le décompresseur DRACO
 const loader = new GLTFLoader();
+
+// 🚀 AJOUTÉ : On configure le décompresseur Draco officiel via le CDN de Google
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+loader.setDRACOLoader(dracoLoader);
+
 let selectableObjects = [];
 
+// Chargement de ton fichier unique studio.glb
 loader.load(
     'studio.glb', 
     (gltf) => {
@@ -45,13 +53,12 @@ loader.load(
         scene.add(model);
         model.position.set(0, 0, 0);
 
-        // On mémorise tous les éléments pour pouvoir cliquer dessus
         model.traverse((child) => {
             if (child.isMesh) {
                 selectableObjects.push(child);
             }
         });
-        console.log("3D chargée !");
+        console.log("3D chargée avec succès grâce à Draco !");
     },
     undefined,
     (error) => {
@@ -64,9 +71,8 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 window.addEventListener('click', (event) => {
-    if (event.target.closest('#info-box')) return; // Évite de cliquer à travers la popup
+    if (event.target.closest('#info-box')) return; 
 
-    // Coordonnées de la souris
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
@@ -76,10 +82,9 @@ window.addEventListener('click', (event) => {
     if (intersects.length > 0) {
         let hitObject = intersects[0].object;
 
-        // 🚨 L'ESPION : L'alerte te donne le nom exact défini par Blender !
+        // L'ESPION : L'alerte
         alert("Tu as cliqué sur l'objet nommé : " + hitObject.name);
 
-        // Recherche du nom dans la base de données (remonte aux parents si besoin)
         let foundData = null;
         let current = hitObject;
         while (current) {
@@ -90,7 +95,6 @@ window.addEventListener('click', (event) => {
             current = current.parent;
         }
 
-        // Si le nom est dans ta liste, on ouvre la popup d'infos
         if (foundData) {
             document.getElementById('info-title').innerText = foundData.title;
             document.getElementById('info-description').innerText = foundData.desc;
@@ -112,7 +116,6 @@ function animate() {
 }
 animate();
 
-// Ajustement automatique à l'écran
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
