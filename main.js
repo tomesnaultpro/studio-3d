@@ -8,7 +8,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x1a1a1a);
 
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 5, 10); 
+camera.position.set(0, 5, 10); // Position de départ de la caméra
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -19,15 +19,20 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 
-// 3. Lumières globales (Boostées pour que ce ne soit pas noir)
-const ambientLight = new THREE.AmbientLight(0xffffff, 2.5);
+// 3. Lumières globales (Boostées au maximum et dynamiques)
+const ambientLight = new THREE.AmbientLight(0xffffff, 4.0); // Lumière ambiante très forte
 scene.add(ambientLight);
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 3.0);
-dirLight.position.set(10, 20, 10);
+const dirLight = new THREE.DirectionalLight(0xffffff, 5.0); // Lumière type "Soleil"
+dirLight.position.set(20, 40, 20);
 scene.add(dirLight);
 
-// 4. BASE DE DONNÉES DES INFOS
+// Lumière "Flash" attachée à la caméra (éclaire là où on regarde)
+const cameraLight = new THREE.PointLight(0xffffff, 15.0, 100);
+camera.add(cameraLight);
+scene.add(camera);
+
+// 4. BASE DE DONNÉES DES INFOS (À remplir avec les noms de Blender)
 const equipmentsData = {
     "ExempleNomDeBlender": { 
         title: "Mon Équipement", 
@@ -39,7 +44,7 @@ const equipmentsData = {
 const loader = new GLTFLoader();
 const dracoLoader = new DRACOLoader();
 
-// Lien vers le décompresseur officiel Google
+// Lien vers le décompresseur officiel Google pour lire ton fichier compressé
 dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
 loader.setDRACOLoader(dracoLoader);
 
@@ -53,11 +58,11 @@ loader.load(
         scene.add(model);
         model.position.set(0, 0, 0);
 
-        // Ajuster la caméra sur le modèle
+        // On force les contrôles et la caméra à viser le centre du modèle
         camera.lookAt(model.position);
-        controls.target.copy(model.position);
+        controls.target.set(0, 0, 0);
 
-        // On mémorise la structure pour le clic
+        // On mémorise la structure pour pouvoir cliquer sur les objets
         model.traverse((child) => {
             if (child.isMesh) {
                 selectableObjects.push(child);
@@ -72,58 +77,4 @@ loader.load(
 );
 
 // 6. Détection du clic et technique de l'Espion
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-
-window.addEventListener('click', (event) => {
-    if (event.target.closest('#info-box')) return; 
-
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(selectableObjects);
-
-    if (intersects.length > 0) {
-        let hitObject = intersects[0].object;
-
-        // L'ESPION : L'alerte magique
-        alert("Tu as cliqué sur l'objet nommé : " + hitObject.name);
-
-        let foundData = null;
-        let current = hitObject;
-        while (current) {
-            if (equipmentsData[current.name]) {
-                foundData = equipmentsData[current.name];
-                break;
-            }
-            current = current.parent;
-        }
-
-        if (foundData) {
-            document.getElementById('info-title').innerText = foundData.title;
-            document.getElementById('info-description').innerText = foundData.desc;
-            document.getElementById('info-box').style.display = 'block';
-        }
-    }
-});
-
-// Fermeture de la popup d'infos
-document.getElementById('close-btn').addEventListener('click', () => {
-    document.getElementById('info-box').style.display = 'none';
-});
-
-// 7. Boucle d'animation en continu
-function animate() {
-    requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene, camera);
-}
-animate();
-
-// Redimensionnement automatique de la fenêtre
-window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-});
+const raycaster =
