@@ -103,7 +103,7 @@ const chairData = {
           </a>`
 };
 
-// --- E. LE BUREAU DE PRODUCTION (Sécurisé avec des portions de mots clés)
+// --- E. LE BUREAU DE PRODUCTION ---
 const deskObjectsList = [
     "object_4", "object_6", "object_68", "object_69"
 ];
@@ -114,6 +114,24 @@ const deskData = {
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
              Voir le produit sur tikimob
+          </a>`
+};
+
+// --- F. LE CASQUE AUDIO ---
+const headphoneObjectsList = [
+    "syukhlwqwhfyqza", "tovohyqezchyzgl", "zczolifjlvlctmq", "wwtyjswgshsanes", 
+    "aanwpkmfljrwqj", "aexpvrshrbaarooz", "qvkyuxluhiwizge", "ygrsyuxvgxlggro", 
+    "bnozvcafckcanz", "pndaaljhbshkuws", "ymagkzdkmtwuqje", "wdmisgpfbmqrdoh", 
+    "fzpyptjpuzbycjw", "xipiahsthjzhhww", "ltnuleuwbsqyabk", "sytnpmcquioflqg", 
+    "ecebbpfgksspuio"
+];
+const headphoneData = {
+    title: "AirPods Max",
+    desc: `Casque audio sans fil circum-auriculaire Apple offrant une restitution sonore haute fidélité, une réduction active du bruit de pointe et un mode transparence immersif.<br><br>
+          <a href="https://www.apple.com/fr/shop/buy-airpods/airpods-max-2/bleu" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir le produit sur Apple ↗
           </a>`
 };
 
@@ -158,7 +176,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio prêt et sécurisé !");
+        console.log("Studio chargé avec le casque AirPods Max !");
     },
     undefined,
     (error) => {
@@ -179,7 +197,7 @@ function handleInteraction(clientX, clientY) {
         let current = hitObject;
         let finalData = null;
 
-        // On remonte l'arborescence pour trouver une correspondance plus souple (.some et .includes)
+        // On remonte l'arborescence pour trouver une correspondance souple
         while (current && current !== scene) {
             let nameLower = current.name.toLowerCase().trim();
             
@@ -197,6 +215,9 @@ function handleInteraction(clientX, clientY) {
                 break;
             } else if (deskObjectsList.some(item => nameLower.includes(item))) {
                 finalData = deskData;
+                break;
+            } else if (headphoneObjectsList.some(item => nameLower.includes(item))) {
+                finalData = headphoneData;
                 break;
             }
             current = current.parent;
