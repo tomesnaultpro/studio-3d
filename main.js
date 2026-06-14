@@ -109,7 +109,7 @@ const deskObjectsList = [
 ];
 const deskData = {
     title: "Bureau double caisson noir Tikimob",
-    desc: `Bureau sur mesure robuste de couleur noire avec double caisson de rangement, idéal pour un setup de production propre, épuré et bien organisé.<br><br>
+    desc: `Bureau sur mesure robuste de couleur noire avec double caisson de rangement, idéal pour un setup de production propre, épuré et bien organized.<br><br>
           <a href="https://www.tikimob.fr/meubles-et-accessoires/tikimodeles/bureau_f/bureau-sur-mesure-double-caisson-couleur-noir/?gad_source=1&gad_campaignid=14724494636&gclid=Cj0KCQjwornRBhCrARIsAON5exHB3lFV8beacGWiKrjQ0UDpfZuUMZPnjaTgoB2TxBEYDY4qkhUdinAaAvt4EALw_wcB" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
@@ -117,14 +117,13 @@ const deskData = {
           </a>`
 };
 
-// --- F. LE CASQUE AUDIO (Tous tes objets exacts intégrés)
+// --- F. LE CASQUE AUDIO (Avec AANWpKMFljrFwQj et AExPvRSHRbARooZ réparés)
 const headphoneObjectsList = [
     "syukhlwqwhfyqza", "tovohyqezchyzgl", "zczolifjlvlctmq", "wwtyjswgshsanes", 
-    "aanwpkmfljrwqj", "aexpvrshrbaarooz", "wwtyjswgshsanes", "qvkyuxluhiwizge", 
-    "ygrsyuxvgxlggro", "bnozvcafckcmanz", "pndaaljhbshkuws", "ymagkzdkmtwuqje", 
-    "bnozvcafckcmanz", "wdmisgpfbmqrdoh", "fzpyptjpuzbycjw", "xiphiahsthjzhhw", 
-    "ltnuleuwbsqyabk", "sytnpmcquioflqg", "syukhlwqwhfyqza", "bnozvcafckcmanz", 
-    "wdmisgpfbmqrdoh", "ecebbpfgksspuio"
+    "aanwpkmfljrfwqj", "aexpvrshrbaarooz", "qvkyuxluhiwizge", "ygrsyuxvgxlggro", 
+    "bnozvcafckcmanz", "pndaaljhbshkuws", "ymagkzdkmtwuqje", "wdmisgpfbmqrdoh", 
+    "fzpyptjpuzbycjw", "xiphiahsthjzhhw", "ltnuleuwbsqyabk", "sytnpmcquioflqg", 
+    "ecebbpfgksspuio"
 ];
 const headphoneData = {
     title: "AirPods Max",
@@ -177,7 +176,7 @@ loader.load(
                 }
             }
         });
-        console.log("Studio prêt avec la liste complète du casque !");
+        console.log("Studio prêt !");
     },
     undefined,
     (error) => {
