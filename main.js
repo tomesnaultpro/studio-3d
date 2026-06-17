@@ -38,7 +38,7 @@ const mouse = new THREE.Vector2();
 let selectableObjects = [];
 
 // =========================================================================
-// 4. BASE DE DONNÉES COMPLÈTE ET CORRIGÉE DU STUDIO
+// 4. BASE DE DONNÉES COMPLÈTE ET VALIDÉE DU STUDIO
 // =========================================================================
 
 // --- A. LA BATTERIE ---
@@ -195,7 +195,7 @@ const phoneObjectsList = [
 
 const phoneData = {
     title: "Apple iPhone 15 Pro (256 Go) - Noir",
-    desc: `Smartphone de contrôle ultra-puissant doté du châssis en titane de qualité aérospatiale et de la puce A17 Pro. Il sert de télécommande et d'outil multimédia parfait pour piloter la diffusion, enregistrer des sessions ou gérer la DAW à distance via le réseau du studio.<br><br>
+    desc: `Smartphone de contrôle ultra-puissant doté d'un châssis en titane et de la puce A17 Pro. Il sert d'outil multimédia parfait pour piloter la diffusion, enregistrer des sessions ou gérer la DAW à distance via le réseau du studio.<br><br>
           <a href="https://www.darty.com/nav/achat/telephonie/telephone_mobile_seul/iphone/apple_iph15pro_256go_noir.html" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
@@ -203,7 +203,50 @@ const phoneData = {
           </a>`
 };
 
-// --- G. RECHERCHE PAR MOTS-CLÉS (Pour les meubles restants) ---
+// --- G. CLAVIER MIDI ARTURIA KEYLAB 61 MK3 (Nouvel ajout) ---
+const midiPianoObjectsList = [
+  "object_68", "object_69", "object_71", "object_72", "object_73", "object_74"
+];
+
+const midiPianoData = {
+    title: "Arturia KeyLab 61 Mk3 - White",
+    desc: `Clavier maître USB/MIDI haut de gamme à 61 touches. Idéal pour le studio, il offre un toucher semi-lesté d'une précision incroyable, de nombreux pads, curseurs et encodeurs, ainsi qu'une intégration logicielle parfaite avec toutes les DAW majeurs.<br><br>
+          <a href="https://www.bax-shop.fr/clavier-midi/arturia-keylab-61-mk3-white-clavier-usb-midi" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Découvrir sur Bax-Music ↗
+          </a>`
+};
+
+// --- H. SURFACE DE CONTRÔLE AKAI MIDIMIX (Nouvel ajout) ---
+const akaiMixObjectsList = [
+  "object_100", "object_98", "object_99"
+];
+
+const akaiMixData = {
+    title: "Akai Professional MIDImix",
+    desc: `Surface de contrôle ultra-compacte et performante permettant de mixer ses projets musicaux en studio avec une ergonomie tactile. Elle offre la disposition classique d'une table de mixage avec 8 faders individuels, 24 potentiomètres rotatifs et un fader master.<br><br>
+          <a href="https://www.stars-music.fr/akai-midimix-surface-controle_87378.html" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir sur Stars Music ↗
+          </a>`
+};
+
+// --- I. ÉCRAN DELL + BRAS ARTICULÉ ERGONOMIQUE MANUTAN (Nouvel ajout fusionné) ---
+const screenObjectsList = [
+  "object_206", "object_214", "object_217", "object_218", "object_220", "object_222", 
+  "object_188", "object_196", "object_199", "object_200", "object_202", "object_204"
+];
+
+const screenData = {
+    title: "Moniteur Dell 27\" & Bras Ergonomique Manutan",
+    desc: `Ensemble d'affichage de régie comprenant l'écran Dell 27" fluide et réactif, suspendu sur son bras porte-écran articulé noir Manutan Expert. Ce système libère l'espace de travail sur le meuble de studio tout en garantissant un angle de vision optimal.<br><br>
+          <a href="https://www.dell.com/fr-fr/shop/%C3%A9cran-dell-27-200-hz-se2725hg/apd/210-bsns/%C3%A9crans-et-accessoires-pour-%C3%A9crans" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'Écran sur Dell ↗</a><br>
+          <a href="https://www.manutan.fr/fr/maf/bras-porte-ecran-articule-ergonomique-simple-noir-manutan-expert-ac28285" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Bras sur Manutan ↗</a>`
+};
+
+// --- J. RECHERCHE AUTOMATIQUE / MOTS-CLÉS ---
 const studioStudioData = [
     {
         keywords: ["graphictablet", "desk", "screen", "bureau", "jarre"],
@@ -230,6 +273,9 @@ function getObjectData(nameLower) {
     if (micObjectsList.includes(nameLower)) return micData;
     if (headphoneObjectsList.includes(nameLower)) return headphoneData;
     if (phoneObjectsList.includes(nameLower)) return phoneData;
+    if (midiPianoObjectsList.includes(nameLower)) return midiPianoData;
+    if (akaiMixObjectsList.includes(nameLower)) return akaiMixData;
+    if (screenObjectsList.includes(nameLower)) return screenData;
 
     for (const item of studioStudioData) {
         if (item.keywords.some(kw => nameLower.includes(kw))) {
