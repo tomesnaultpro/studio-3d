@@ -42,8 +42,8 @@ let selectableObjects = [];
 // 4. BASE DE DONNÉES DU STUDIO (REPARTI À ZÉRO - UNIQUEMENT LA BATTERIE)
 // =========================================================================
 
-// Mots-clés textuels présents dans ton fichier GLTF pour la batterie
-const drumKeywords = ["branco", "circle", "prato", "peli"];
+// Tous les mots-clés de composants présents dans ton premier fichier GLTF de batterie
+const drumKeywords = ["branco", "circle", "prato", "peli", "objeto", "mesh", "cylinder", "cube", "line"];
 
 const drumData = {
     title: "Pearl Roadshow 22\" Plus Jet Black",
@@ -55,18 +55,18 @@ const drumData = {
           </a>`
 };
 
-// Fonction de détection par plage numérique exacte (vérifiée dans ton GLTF)
+// Fonction de détection globale de la batterie
 function isDrumMesh(nameLower) {
-    // 1. Vérification des mots-clés textuels (ex: BRANCO.436, Circle.150...)
+    // 1. Si le nom contient l'un des mots-clés exacts de ton fichier de batterie
     if (drumKeywords.some(keyword => nameLower.includes(keyword))) {
         return true;
     }
     
-    // 2. Vérification des numéros de maillages bruts (ex: Object_1787, Object_1790...)
+    // 2. Sécurité par rapport aux ID de ton fichier principal (les objets anonymes de la batterie)
     const match = nameLower.match(/object_(\d+)/);
     if (match) {
         const num = parseInt(match[1], 10);
-        // Dans ton GLTF, la batterie occupe toute la plage du bloc supérieur (1700 à 2000)
+        // Zone où se situe l'intégralité du bloc batterie dans le studio
         return (num >= 1700 && num <= 2000);
     }
     
@@ -103,13 +103,13 @@ loader.load(
         camera.position.set(maxDim * 0.3, maxDim * 0.6, cameraZ);
         controls.target.set(0, 0, 0);
 
-        // Ajout de tous les maillages de la pièce à la liste cliquable
+        // Ajout de tous les maillages à la liste cliquable
         model.traverse((child) => {
             if (child.isMesh) {
                 selectableObjects.push(child);
             }
         });
-        console.log("Nouveau système propre initialisé. Détection de la batterie corrigée !");
+        console.log("Système synchronisé. Tous les objets de la batterie sont désormais actifs !");
     },
     undefined,
     (error) => {
@@ -130,7 +130,7 @@ function handleInteraction(clientX, clientY) {
         let current = hitObject;
         let finalData = null;
 
-        // On remonte l'arborescence de l'objet cliqué pour valider son identifiant
+        // On remonte l'arborescence pour valider si c'est un morceau de la batterie
         while (current && current !== scene) {
             let nameLower = current.name.toLowerCase().trim();
             
@@ -141,13 +141,13 @@ function handleInteraction(clientX, clientY) {
             current = current.parent;
         }
 
-        // Affichage dynamique dans le volet d'information HTML
+        // Affichage dynamique dans le volet HTML
         if (finalData) {
             document.getElementById('info-title').innerText = finalData.title;
             document.getElementById('info-description').innerHTML = finalData.desc;
             document.getElementById('info-box').classList.add('active');
         } else {
-            // Si on clique sur un autre élément pas encore configuré (murs, sol, etc.), on ferme le panel
+            // Si on clique ailleurs sur un objet non configuré, on ferme le volet
             document.getElementById('info-box').classList.remove('active');
         }
     } else {
