@@ -254,7 +254,7 @@ const cameraObjectsList = [
 
 const cameraData = {
     title: "Sony Alpha 7 III & Bras Magique SmallRig",
-    desc: `Caméra hybride plein format hautes performances associée à un objectif 28-70mm, suspendue solidement par un bras magique articulé SmallRig (11"). Parfait pour capturer des vidéos de qualité professionnelle en régie ou filmer des sessions de podcast.<br><br>
+    desc: `Caméra hybride plein format hautes performances associée à un objectif 28-70mm, suspendue solidement by un bras magique articulé SmallRig (11"). Parfait pour capturer des vidéos de qualité professionnelle en régie ou filmer des sessions de podcast.<br><br>
           <a href="https://www.digit-photo.com/SONY-Alpha-7-III-28-70mm-f-3-5-5-6-SEL-rSONYILCE7M3KBCEC.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir la Caméra sur Digit-Photo ↗</a><br>
           <a href="https://www.digit-photo.com/SMALLRIG-5309-Support-Bras-Magique-11-rSMALLRIG5309.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Bras SmallRig sur Digit-Photo ↗</a>`
 };
@@ -338,7 +338,7 @@ const ipadProObjectsList = [
 
 const ipadProData = {
     title: "Apple iPad Pro, Kiosque Space & Apple Pencil Pro",
-    desc: `Tablette professionnelle iPad Pro ultra-puissante installée de manière sécurisée dans un kiosque de protection Space Enclosure Maclocks. Cet ensemble de régie haut de gamme est complété by l'Apple Pencil Pro, idéal pour l'édition de partitions numériques, le dessin technique ou les commandes DAW tactiles micrométriques.<br><br>
+    desc: `Tablette professionnelle iPad Pro ultra-puissante installée de manière sécurisée dans un kiosque de protection Space Enclosure Maclocks. Cet ensemble de régie haut de gamme est complété par l'Apple Pencil Pro, idéal pour l'édition de partitions numériques, le dessin technique ou les commandes DAW tactiles micrométriques.<br><br>
           <a href="https://www.apple.com/fr/ipad-pro/" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Découvrir l'iPad Pro sur Apple ↗</a><br>
           <a href="https://www.maclocks.eu/fr/space-ipad-enclosure-kiosk.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir la Borne Kiosque Space sur Maclocks ↗</a><br>
           <a href="https://www.apple.com/fr/shop/product/mx2d3zm/a/apple-pencil-pro" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'Apple Pencil Pro sur l'Apple Store ↗</a>`
@@ -416,7 +416,7 @@ const denonAmpliData = {
           </a>`
 };
 
-// --- V. PATCHBAY STUDIO NEUTRIK NYS-SPPL1 (Nouvel ajout) ---
+// --- V. PATCHBAY STUDIO NEUTRIK NYS-SPPL1 ---
 const neutrikPatchbayObjectsList = [
   "object_166", "object_167", "object_185", "object_186"
 ];
@@ -431,22 +431,22 @@ const neutrikPatchbayData = {
           </a>`
 };
 
-// --- W. PREAMP MULTI-CANAUX FOCUSRITE SCARLETT OCTOPRE - UNITÉ ÉTAGE 1 (Nouvel ajout) ---
+// --- W. PREAMP MULTI-CANAUX FOCUSRITE SCARLETT OCTOPRE DYNAMIC - UNITÉ ÉTAGE 1 (Remplacement effectué !) ---
 const octopre1ObjectsList = [
   "object_175", "object_176"
 ];
 
 const octopre1Data = {
-    title: "Focusrite Scarlett OctoPre (Unité 1)",
-    desc: `Préamplificateur micro à 8 canaux de haute qualité intégrant des convertisseurs AN/NA de précision 24 bits / 192 kHz et une connectique ADAT optique. Idéal pour étendre les entrées de la régie pour des sessions d'enregistrement de groupe.<br><br>
-          <a href="https://www.thomann.fr/focusrite_scarlett_octopre.htm" 
+    title: "Focusrite Scarlett OctoPre Dynamic (Unité 1)",
+    desc: `Préamplificateur micro à 8 canaux hautes performances doté d'un compresseur analogique transparent de type "Soft-Knee" par canal. Il gère idéalement la dynamique des instruments percutants et assure une conversion AN/NA irréprochable en ADAT.<br><br>
+          <a href="https://www.bax-shop.fr/preamplis-micro/focusrite-scarlett-octopre-dynamic-preampli" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir l'OctoPre sur Thomann ↗
+             Voir l'OctoPre Dynamic sur Bax-Shop ↗
           </a>`
 };
 
-// --- X. PREAMP MULTI-CANAUX FOCUSRITE SCARLETT OCTOPRE - UNITÉ ÉTAGE 2 (Nouvel ajout) ---
+// --- X. PREAMP MULTI-CANAUX FOCUSRITE SCARLETT OCTOPRE - UNITÉ ÉTAGE 2 ---
 const octopre2ObjectsList = [
   "object_178", "object_179", "object_180"
 ];
