@@ -2,46 +2,59 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-import { SelectionBox } from 'three/addons/interactive/SelectionBox.js';
-import { SelectionHelper } from 'three/addons/interactive/SelectionHelper.js';
 
 // 1. Configuration de la Scène
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0d0d11);
+scene.background = new THREE.Color(0x0a0a0d); // Fond légèrement plus sombre pour faire ressortir le modèle
+scene.fog = new THREE.FogExp2(0x0a0a0d, 0.015); // Léger effet de profondeur
 
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+const renderer = new THREE.WebGLRenderer({ 
+    antialias: true, 
+    powerPreference: "high-performance",
+    alpha: false,
+    stencil: false,
+    depth: true
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping; // Rendu des couleurs plus cinématique et réaliste
+renderer.toneMappingExposure = 1.0;
 document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-// Style CSS pour le rectangle de sélection Windows
-const style = document.createElement('style');
-style.innerHTML = `.selectBox { border: 2px dashed #00d2ff; background-color: rgba(0, 210, 255, 0.2); position: absolute; pointer-events: none; }`;
-document.head.appendChild(style);
-
-// 2. Configuration des contrôles
+// 2. Configuration des contrôles (Plus fluides)
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.dampingFactor = 0.1; 
+controls.dampingFactor = 0.05; 
+controls.maxPolarAngle = Math.PI / 2 - 0.05; // Empêche de passer sous le sol
 
-// 3. Lumières
-const ambientLight = new THREE.AmbientLight(0xffffff, 3.5); 
+// 3. Lumières optimisées
+const ambientLight = new THREE.AmbientLight(0xffffff, 2.5); 
 scene.add(ambientLight);
-const dirLight = new THREE.DirectionalLight(0xffffff, 4.0); 
-dirLight.position.set(30, 50, 30);
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 3.0); 
+dirLight.position.set(20, 40, 20);
 scene.add(dirLight);
+
+// Ajout d'une fine lumière bleutée en arrière-plan pour le contraste
+const fillLight = new THREE.DirectionalLight(0x00d2ff, 1.0);
+fillLight.position.set(-20, 20, -20);
+scene.add(fillLight);
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 let selectableObjects = [];
+let hoveredObject = null;
+let originalMaterial = null;
+
+// Matériau de surbrillance discret au survol
+const hoverMaterialModifier = new THREE.Color(0x223344);
 
 // =========================================================================
-// 4. BASE DE DONNÉES COMPLÈTE ET VALIDÉE DU STUDIO
+// 4. BASE DE DONNÉES COMPLÈTE DU STUDIO
 // =========================================================================
 
-// --- A. LA BATTERIE ---
 const drumObjectsList = [
   "object_1007", "object_1013", "object_1016", "object_1022", "object_1049", 
   "object_1052", "object_1055", "object_1058", "object_1064", "object_11", 
@@ -86,14 +99,9 @@ const drumObjectsList = [
 const drumData = {
     title: "Pearl Roadshow 22\" Plus Jet Black",
     desc: `Batterie acoustique complète de la série Roadshow, idéale pour les batteurs exigeants. Elle comprend des fûts robustes en peuplier, un accastillage complet et des cymbales pour un punch et une résonance remarquables au studio.<br><br>
-          <a href="https://www.thomann.fr/pearl_roadshow_22_plus_jet_black.htm" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le produit sur Thomann ↗
-          </a>`
+          <a href="https://www.thomann.fr/pearl_roadshow_22_plus_jet_black.htm" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le produit sur Thomann ↗</a>`
 };
 
-// --- B. ENCEINTES KRK + TRÉPIEDS FUSIONNÉS ---
 const speakerObjectsList = [
   "object_126", "object_135", "object_136", "object_137", "object_138", 
   "object_140", "object_149", "object_150", "object_151", "object_152",
@@ -107,14 +115,9 @@ const speakerObjectsList = [
 const speakerData = {
     title: "KRK Kreate 5 avec Trépieds (La Paire)",
     desc: `Enceintes de monitoring actives associées à leurs trépieds d'isolation acoustique. Ce système offre une clarté légendaire avec un woofer en Kevlar et élimine les vibrations indésirables pour un mixage audio ultra-précis.<br><br>
-          <a href="https://www.sonovente.com/krk-kreate-5-la-paire-supports-bas-p106242.html" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir l'ensemble sur SonoVente ↗
-          </a>`
+          <a href="https://www.sonovente.com/krk-kreate-5-la-paire-supports-bas-p106242.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'ensemble sur SonoVente ↗</a>`
 };
 
-// --- C. CANAPÉ DESIGN BONO ---
 const sofaObjectsList = [
   "box009_gray_fabric_0", "cylinder001_metall_0", "line001_metall_0", 
   "line002_metall_0", "line009_metall_0", "line010_metall_0",
@@ -125,29 +128,16 @@ const sofaObjectsList = [
 const sofaData = {
     title: "Canapé Design 3 Places BONO",
     desc: `Canapé élégant en tissu effet velours texturé gris. Sa structure moderne et son assise confortable offrent un espace lounge idéal à l'arrière du studio pour accueillir les artistes pendant les phases d'écoute.<br><br>
-          <a href="https://www.miliboo.com/canape-design-3-places-tissu-effet-velours-texture-gris-bono-57597.html" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le canapé sur Miliboo ↗
-          </a>`
+          <a href="https://www.miliboo.com/canape-design-3-places-tissu-effet-velours-texture-gris-bono-57597.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le canapé sur Miliboo ↗</a>`
 };
 
-// --- D. MICRO ENREGISTREMENT RODE NT1-A ---
-const micObjectsList = [
-  "layer_2base__0", "layer_4mic_head__0"
-];
-
+const micObjectsList = ["layer_2base__0", "layer_4mic_head__0"];
 const micData = {
     title: "Rode NT1-A Complete Vocal Bundle",
     desc: `Microphone de studio d'enregistrement à condensateur large membrane avec sa suspension araignée, son filtre anti-pop intégré et son écran acoustique d'isolation.<br><br>
-          <a href="https://www.thomann.fr/rode_nt1_a_compl._micscreen_bundle.htm" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le pack Micro sur Thomann ↗
-          </a>`
+          <a href="https://www.thomann.fr/rode_nt1_a_compl._micscreen_bundle.htm" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le pack Micro sur Thomann ↗</a>`
 };
 
-// --- E. CASQUE AUDIO APPLE AIRPODS MAX ---
 const headphoneObjectsList = [
   "aanwpkmfljrfwqj", "aexpvrshrbaarooz", "bnozvcafckcmanz", "djdgbrevlkseknl", 
   "fzpyptjpuzbycjw", "huobrxkxkekuwxx", "huxnidmrqhpdtej", "ihefvqmczhpaduy", 
@@ -164,14 +154,9 @@ const headphoneObjectsList = [
 const headphoneData = {
     title: "Apple AirPods Max - Bleu",
     desc: `Casque supra-auriculaire haut de gamme associant un son haute fidélité à la technologie de réduction active du bruit leader du marché. Idéal pour s'isoler ou effectuer des vérifications d'écoute.<br><br>
-          <a href="https://www.apple.com/fr/shop/buy-airpods/airpods-max-2/bleu" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir sur l'Apple Store ↗
-          </a>`
+          <a href="https://www.apple.com/fr/shop/buy-airpods/airpods-max-2/bleu" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir sur l'Apple Store ↗</a>`
 };
 
-// --- F. APPLE iPHONE 15 PRO ---
 const phoneObjectsList = [
   "object_101001", "object_105", "object_107001", "object_110001", "object_11001", 
   "object_112", "object_114001", "object_116001", "object_118001", "object_120001", 
@@ -196,44 +181,23 @@ const phoneObjectsList = [
 const phoneData = {
     title: "Apple iPhone 15 Pro (256 Go) - Noir",
     desc: `Smartphone de contrôle ultra-puissant doté d'un châssis en titane. Il sert d'outil multimédia parfait pour piloter la diffusion, enregistrer des sessions ou gérer la DAW à distance.<br><br>
-          <a href="https://www.darty.com/nav/achat/telephonie/telephone_mobile_seul/iphone/apple_iph15pro_256go_noir.html" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir l'iPhone sur Darty ↗
-          </a>`
+          <a href="https://www.darty.com/nav/achat/telephonie/telephone_mobile_seul/iphone/apple_iph15pro_256go_noir.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'iPhone sur Darty ↗</a>`
 };
 
-// --- G. CLAVIER MIDI ARTURIA KEYLAB 61 MK3 ---
-const midiPianoObjectsList = [
-  "object_68", "object_69", "object_71", "object_72", "object_73", "object_74"
-];
-
+const midiPianoObjectsList = ["object_68", "object_69", "object_71", "object_72", "object_73", "object_74"];
 const midiPianoData = {
     title: "Arturia KeyLab 61 Mk3 - White",
     desc: `Clavier maître USB/MIDI haut de gamme à 61 touches semi-lestées. Offre de nombreux pads, curseurs et encodeurs avec une intégration logicielle parfaite pour composer efficacement.<br><br>
-          <a href="https://www.bax-shop.fr/clavier-midi/arturia-keylab-61-mk3-white-clavier-usb-midi" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Découvrir sur Bax-Music ↗
-          </a>`
+          <a href="https://www.bax-shop.fr/clavier-midi/arturia-keylab-61-mk3-white-clavier-usb-midi" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Découvrir sur Bax-Music ↗</a>`
 };
 
-// --- H. SURFACE DE CONTRÔLE AKAI MIDIMIX ---
-const akaiMixObjectsList = [
-  "object_100", "object_98", "object_99"
-];
-
+const akaiMixObjectsList = ["object_100", "object_98", "object_99"];
 const akaiMixData = {
     title: "Akai Professional MIDImix",
     desc: `Surface de contrôle ultra-compacte permettant de mixer ses projets musicaux en studio avec une ergonomie tactile. Elle offre 8 faders individuels et 24 potentiomètres rotatifs.<br><br>
-          <a href="https://www.stars-music.fr/akai-midimix-surface-controle_87378.html" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir sur Stars Music ↗
-          </a>`
+          <a href="https://www.stars-music.fr/akai-midimix-surface-controle_87378.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir sur Stars Music ↗</a>`
 };
 
-// --- I. ÉCRAN DELL + BRAS ARTICULÉ ERGONOMIQUE MANUTAN ---
 const screenObjectsList = [
   "object_206", "object_214", "object_217", "object_218", "object_220", "object_222", 
   "object_188", "object_196", "object_199", "object_200", "object_202", "object_204"
@@ -246,7 +210,6 @@ const screenData = {
           <a href="https://www.manutan.fr/fr/maf/bras-porte-ecran-articule-ergonomique-simple-noir-manutan-expert-ac28285" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Bras sur Manutan ↗</a>`
 };
 
-// --- J. SONY ALPHA 7 III & BRAS SMALLRIG ---
 const cameraObjectsList = [
   "object_50", "object_51", "object_52", "object_54", "object_55", 
   "object_57", "object_58", "object_59", "object_42", "object_43", "object_44"
@@ -254,230 +217,123 @@ const cameraObjectsList = [
 
 const cameraData = {
     title: "Sony Alpha 7 III & Bras Magique SmallRig",
-    desc: `Caméra hybride plein format hautes performances associée à un objectif 28-70mm, suspendue solidement par un bras magique articulé SmallRig (11"). Parfait pour capturer des vidéos de qualité professionnelle en régie ou filmer des sessions de podcast.<br><br>
-          <a href="https://www.digit-photo.com/SONY-Alpha-7-III-28-70mm-f-3-5-5-6-SEL-rSONYILCE7M3KBCEC.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir la Caméra sur Digit-Photo ↗</a><br>
-          <a href="https://www.digit-photo.com/SMALLRIG-5309-Support-Bras-Magique-11-rSMALLRIG5309.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Bras SmallRig sur Digit-Photo ↗</a>`
+    desc: `Caméra hybride plein format hautes performances associée à un objectif 28-70mm, suspendue solidement par un bras magique articulé SmallRig (11"). Parfait pour capturer des vidéos de qualité professionnelle.<br><br>
+          <a href="https://www.digit-photo.com/SONY-Alpha-7-III-28-70mm-f-3-5-5-6-SEL-rSONYILCE7M3KBCEC.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir la Caméra sur Digit-Photo ↗</a>`
 };
 
-// --- K. ELGATO STREAM DECK MK2 ---
-const streamDeckObjectsList = [
-  "object_224", "object_225", "object_226"
-];
-
+const streamDeckObjectsList = ["object_224", "object_225", "object_226"];
 const streamDeckData = {
     title: "Elgato Stream Deck MK2",
-    desc: `Interface de contrôle d'automatisation de studio comprenant 15 touches LCD entièrement personnalisables. Elle permet de lancer des macros, contrôler l'audio, basculer des scènes vidéo et piloter des applications de production en une pression.<br><br>
-          <a href="https://www.thomann.fr/elgato_stream_deck_mk2.htm" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir sur Thomann ↗
-          </a>`
+    desc: `Interface de contrôle d'automatisation de studio comprenant 15 touches LCD entièrement personnalisables pour lancer des macros et piloter les DAWs.<br><br>
+          <a href="https://www.thomann.fr/elgato_stream_deck_mk2.htm" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir sur Thomann ↗</a>`
 };
 
-// --- L. MICRO DE STUDIO PODCAST SHURE SM7B ---
-const shureMicObjectsList = [
-  "object_114", "object_117", "object_118", "object_120", "object_122", "object_124"
-];
-
+const shureMicObjectsList = ["object_114", "object_117", "object_118", "object_120", "object_122", "object_124"];
 const shureMicData = {
     title: "Shure SM7B Podcast Bundle",
-    desc: `Le microphone dynamique d'antenne et de studio le plus réputé au monde pour la voix. Livré en pack complet avec son bras articulé de table haut de gamme pour une flexibilité maximale et un rendu audio chaud, soyeux et parfaitement isolé des bruits ambiants.<br><br>
-          <a href="https://www.thomann.fr/shure_sm_7_b_podcast_bundle.htm" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le pack Shure sur Thomann ↗
-          </a>`
+    desc: `Le microphone dynamique d'antenne le plus réputé au monde pour la voix. Livré en pack complet avec son bras articulé haut de gamme.<br><br>
+          <a href="https://www.thomann.fr/shure_sm_7_b_podcast_bundle.htm" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le pack Shure sur Thomann ↗</a>`
 };
 
-// --- M. ENSEMBLE CLAVIER & SOURIS CHERRY STREAM DESKTOP ---
-const cherryKeyboardObjectsList = [
-  "object_154", "object_156", "object_157", "object_159", "object_160"
-];
-
+const cherryKeyboardObjectsList = ["object_154", "object_156", "object_157", "object_159", "object_160"];
 const cherryKeyboardData = {
     title: "Ensemble Clavier & Souris Sans Fil Cherry Stream Desktop",
-    desc: `Ensemble de bureau sans fil et rechargeable combinant un confort de frappe exceptionnel (technologie de ciseaux Cherry SX) et une souris ergonomique précise à 6 boutons. Conçu pour une utilisation intensive, silencieuse et fluide en production informatique.<br><br>
-          <a href="https://www.manutan.fr/fr/maf/ensemble-clavier-souris-sans-fil-rechargeable-stream-desktop-cherry-ab28075" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir l'ensemble Cherry sur Manutan ↗
-          </a>`
+    desc: `Ensemble de bureau sans fil silencieux et robuste, conçu pour une utilisation intensive et fluide en production informatique.<br><br>
+          <a href="https://www.manutan.fr/fr/maf/ensemble-clavier-souris-sans-fil-rechargeable-stream-desktop-cherry-ab28075" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'ensemble Cherry sur Manutan ↗</a>`
 };
 
-// --- N. SUPPORT D'ORDINATEUR ERGONOMIQUE NETWALKER ---
-const netwalkerStandObjectsList = [
-  "object_5"
-];
-
+const netwalkerStandObjectsList = ["object_5"];
 const netwalkerStandData = {
     title: "Support Ergonomique pour Ordinateur Netwalker",
-    desc: `Support élévateur robuste conçu pour surélever l'ordinateur portable ou les périphériques à une hauteur de vue et de manipulation optimale. Favorise une meilleure posture de travail tout en libérant de l'espace sur la surface du bureau principal.<br><br>
-          <a href="https://www.netwalkerstore.com/PBSCProduct.asp?ItmID=41946952&AccID=18244&PGFLngID=0" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le support sur Netwalker Store ↗
-          </a>`
+    desc: `Support élévateur robuste conçu pour surélever l'ordinateur portable à une hauteur de vue optimale.<br><br>
+          <a href="https://www.netwalkerstore.com/PBSCProduct.asp?ItmID=41946952&AccID=18244&PGFLngID=0" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le support sur Netwalker Store ↗</a>`
 };
 
-// --- O. TABLETTE GALAXY TAB A9 & PORTABLE GLIDETAB ---
-const galaxyTabObjectsList = [
-  "object_228", "object_230", "object_231", "object_232"
-];
-
+const galaxyTabObjectsList = ["object_228", "object_230", "object_231", "object_232"];
 const galaxyTabData = {
     title: "Samsung Galaxy Tab A9 11\" & Support Glidetab",
-    desc: `Tablette tactile compacte Android (WiFi, 4 Go RAM, 64 Go) configurée en écran secondaire de retour ou en contrôleur d'application tiers, sécurisée sur son support de fixation ergonomique et pivotant Maclocks Glidetab.<br><br>
-          <a href="https://www.manutan-collectivites.fr/product/tablette-11-galaxy-tab-a9-wifi-4go-64go-anthracite-itg49431097.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir la Tablette sur Manutan ↗</a><br>
-          <a href="https://www.maclocks.eu/fr/glidetab.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Support Glidetab sur Maclocks ↗</a>`
+    desc: `Tablette tactile compacte Android configurée en écran secondaire de retour ou en contrôleur d'application tiers.<br><br>
+          <a href="https://www.manutan-collectivites.fr/product/tablette-11-galaxy-tab-a9-wifi-4go-64go-anthracite-itg49431097.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir la Tablette sur Manutan ↗</a>`
 };
 
-// --- P. iPAD PRO, BORNE SPACE KIOSK & APPLE PENCIL PRO ---
-const ipadProObjectsList = [
-  "object_234", "object_236", "object_237", "object_238", "object_239"
-];
-
+const ipadProObjectsList = ["object_234", "object_236", "object_237", "object_238", "object_239"];
 const ipadProData = {
     title: "Apple iPad Pro, Kiosque Space & Apple Pencil Pro",
-    desc: `Tablette professionnelle iPad Pro ultra-puissante installée de manière sécurisée dans un kiosque de protection Space Enclosure Maclocks. Cet ensemble de régie haut de gamme est complété par l'Apple Pencil Pro, idéal pour l'édition de partitions numériques, le dessin technique ou les commandes DAW tactiles micrométriques.<br><br>
-          <a href="https://www.apple.com/fr/ipad-pro/" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Découvrir l'iPad Pro sur Apple ↗</a><br>
-          <a href="https://www.maclocks.eu/fr/space-ipad-enclosure-kiosk.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir la Borne Kiosque Space sur Maclocks ↗</a><br>
-          <a href="https://www.apple.com/fr/shop/product/mx2d3zm/a/apple-pencil-pro" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'Apple Pencil Pro sur l'Apple Store ↗</a>`
+    desc: `Tablette professionnelle iPad Pro installée dans un kiosque sécurisé. Parfait pour l'édition de partitions numériques et les commandes DAW tactiles.<br><br>
+          <a href="https://www.apple.com/fr/ipad-pro/" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Découvrir l'iPad Pro sur Apple ↗</a>`
 };
 
-// --- Q. ÉCRAN ULTRA-LARGE LG & SUPPORT DE TABLE JPG ---
-const jpgScreenObjectsList = [
-  "object_78", "object_80", "object_82", "object_83", "object_85", "object_86", "object_88", "object_89"
-];
-
+const jpgScreenObjectsList = ["object_78", "object_80", "object_82", "object_83", "object_85", "object_86", "object_88", "object_89"];
 const jpgScreenData = {
     title: "Moniteur UltraWide LG & Trépied de Table JPG",
-    desc: `Moniteur additionnel de retour panoramique UltraWide de marque LG, monté sur un trépied de table ajustable fourni par JPG. C'est l'espace de travail d'affichage parfait pour surveiller en continu ses lignes de script de production, ses automations MIDI ou ses plugins de mixage audio ouverts en simultané.<br><br>
-          <a href="https://www.lg.com/fr/moniteurs/ultrawide/lg-29u511a-b-moniteur-ultrawide/" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'Écran UltraWide sur LG ↗</a><br>
-          <a href="https://www.jpg.fr/postes-informatiques_sku01165-00J.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Support/Trépied sur JPG ↗</a>`
+    desc: `Moniteur additionnel panoramique de marque LG. C'est l'espace parfait pour surveiller vos lignes de script ou automations MIDI.<br><br>
+          <a href="https://www.lg.com/fr/moniteurs/ultrawide/lg-29u511a-b-moniteur-ultrawide/" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'Écran UltraWide sur LG ↗</a>`
 };
 
-// --- R. BRAS ARTICULÉ POUR MICROPHONE K&M 23868 ---
-const kmMicArmObjectsList = [
-  "object_19", "object_20", "object_22", "object_25", "object_26", "object_28", "object_30", "object_32"
-];
-
+const kmMicArmObjectsList = ["object_19", "object_20", "object_22", "object_25", "object_26", "object_28", "object_30", "object_32"];
 const kmMicArmData = {
     title: "Bras de Table pour Micro K&M 23868",
-    desc: `Bras de bureau articulé haut de gamme König & Meyer, conçu pour supporter de manière ultra-fluide et silencieuse des microphones de studio professionnels. Permet un positionnement parfait sans transmission de vibrations parasites.<br><br>
-          <a href="https://www.thomann.fr/km_23868_microphone_desk_arm.htm" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le bras K&M sur Thomann ↗
-          </a>`
+    desc: `Bras de bureau articulé haut de gamme, conçu pour supporter de manière ultra-fluide et silencieuse les microphones professionnels.<br><br>
+          <a href="https://www.thomann.fr/km_23868_microphone_desk_arm.htm" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le bras K&M sur Thomann ↗</a>`
 };
 
-// --- S. PRÉAMPLIFICATEUR À LAMPES ART TUBE PREAMP SYSTEM ---
-const artPreampObjectsList = [
-  "object_162", "object_163", "object_164", "object_172", "object_173"
-];
-
+const artPreampObjectsList = ["object_162", "object_163", "object_164", "object_172", "object_173"];
 const artPreampData = {
     title: "ART Tube PreAmp System",
-    desc: `Préamplificateur de studio à lampes haut de gamme conçu pour réchauffer le signal audio des voix et instruments. Il apporte une saturation harmonique douce et une compression naturelle recherchées lors des prises de son professionnelles.<br><br>
-          <a href="https://www.thomann.fr/art_tube_preamp_system.htm" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le Préampli sur Thomann ↗
-          </a>`
+    desc: `Préamplificateur de studio à lampes haut de gamme conçu pour apporter une saturation harmonique douce et chaleureuse.<br><br>
+          <a href="https://www.thomann.fr/art_tube_preamp_system.htm" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Préampli sur Thomann ↗</a>`
 };
 
-// --- T. CONDITIONNEUR DE COURANT FURMAN M-10x E ---
-const furmanPowerObjectsList = [
-  "object_182", "object_183"
-];
-
+const furmanPowerObjectsList = ["object_182", "object_183"];
 const furmanPowerData = {
     title: "Conditionneur d'Alimentation Furman M-10x E",
-    desc: `Stabilisateur et purificateur de réseau électrique au format rack 19". Essentiel en studio, il protège tout le matériel sensible contre les surtensions et filtre les bruits de fond secteur (interférences RFI/EMI) pour assurer un signal audio d'une clarté irréprochable.<br><br>
-          <a href="https://www.thomann.fr/furman_m10x_e.htm" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le Furman sur Thomann ↗
-          </a>`
+    desc: `Stabilisateur électrique rackable 19". Protège le matériel sensible et élimine les bruits parasites du réseau secteur.<br><br>
+          <a href="https://www.thomann.fr/furman_m10x_e.htm" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Furman sur Thomann ↗</a>`
 };
 
-// --- U. AMPLIFICATEUR STÉRÉO CONNECTÉ DENON DRA-900H ---
-const denonAmpliObjectsList = [
-  "object_8", "object_9", "object_10"
-];
-
+const denonAmpliObjectsList = ["object_8", "object_9", "object_10"];
 const denonAmpliData = {
     title: "Amplificateur Stéréo Réseau Denon DRA-900H",
-    desc: `Ampli audio-vidéo connecté haute fidélité développant 145W par canal. Doté d'une section HDMI 8K de pointe et de l'écosystème HEOS intégré, il sert de hub central pour alimenter les enceintes de monitoring passives et diffuser des flux haute résolution.<br><br>
-          <a href="https://www.futureland.fr/amplificateur-integre-stereo/45451-171845-denon-dra-900h.html" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Découvrir l'Ampli sur Futureland ↗
-          </a>`
+    desc: `Ampli Hi-Fi connecté développant 145W par canal avec section HDMI 8K. Le hub idéal pour centraliser la diffusion du studio.<br><br>
+          <a href="https://www.futureland.fr/amplificateur-integre-stereo/45451-171845-denon-dra-900h.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Découvrir l'Ampli sur Futureland ↗</a>`
 };
 
-// --- V. PATCHBAY STUDIO NEUTRIK NYS-SPPL1 ---
-const neutrikPatchbayObjectsList = [
-  "object_166", "object_167", "object_185", "object_186"
-];
-
+const neutrikPatchbayObjectsList = ["object_166", "object_167", "object_185", "object_186"];
 const neutrikPatchbayData = {
     title: "Patchbay Neutrik NYS-SPPL1",
-    desc: `Baie de brassage analogique rackable 19" équipée de 48 connecteurs Jack 6,35 mm. C'est le centre névralgique de routage du studio, permettant d'interconnecter rapidement et de manière flexible les micros, les préamplis et la carte son sans manipuler les câbles à l'arrière.<br><br>
-          <a href="https://www.thomann.fr/neutrik_nyssppl1.htm" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir la Patchbay sur Thomann ↗
-          </a>`
+    desc: `Baie de brassage analogique 48 points. Permet de router à la volée vos micros et périphériques sans toucher aux câbles arrières.<br><br>
+          <a href="https://www.thomann.fr/neutrik_nyssppl1.htm" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir la Patchbay sur Thomann ↗</a>`
 };
 
-// --- W. PREAMP MULTI-CANAUX FOCUSRITE SCARLETT OCTOPRE DYNAMIC ---
-const octopre1ObjectsList = [
-  "object_175", "object_176"
-];
-
+const octopre1ObjectsList = ["object_175", "object_176"];
 const octopre1Data = {
     title: "Focusrite Scarlett OctoPre Dynamic",
-    desc: `Préamplificateur micro à 8 canaux hautes performances doté d'un compresseur analogique transparent de type "Soft-Knee" par canal. Il gère idéalement la dynamique des instruments percutants et assure une conversion AN/NA irréprochable en ADAT.<br><br>
-          <a href="https://www.bax-shop.fr/preamplis-micro/focusrite-scarlett-octopre-dynamic-preampli" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir l'OctoPre Dynamic sur Bax-Shop ↗
-          </a>`
+    desc: `Préamplificateur micro à 8 canaux hautes performances doté d'un compresseur analogique transparent de type "Soft-Knee" par canal.<br><br>
+          <a href="https://www.bax-shop.fr/preamplis-micro/focusrite-scarlett-octopre-dynamic-preampli" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'OctoPre Dynamic sur Bax-Shop ↗</a>`
 };
 
-// --- X. PREAMP MULTI-CANAUX FOCUSRITE SCARLETT OCTOPRE ---
-const octopre2ObjectsList = [
-  "object_178", "object_179", "object_180"
-];
-
+const octopre2ObjectsList = ["object_178", "object_179", "object_180"];
 const octopre2Data = {
     title: "Focusrite Scarlett OctoPre",
-    desc: `Préamplificateur micro à 8 canaux de haute qualité intégrant des convertisseurs AN/NA de précision 24 bits / 192 kHz et une connectique ADAT optique. Idéal pour étendre les entrées de la régie pour des sessions d'enregistrement de groupe ou de batterie.<br><br>
-          <a href="https://www.thomann.fr/focusrite_scarlett_octopre.htm" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir l'OctoPre sur Thomann ↗
-          </a>`
+    desc: `Préamplificateur micro à 8 canaux de haute qualité intégrant des convertisseurs AN/NA de précision et une connectique ADAT optique.<br><br>
+          <a href="https://www.thomann.fr/focusrite_scarlett_octopre.htm" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'OctoPre sur Thomann ↗</a>`
 };
 
-// --- Y. RECHERCHE AUTOMATIQUE / MOTS-CLÉS ---
 const studioStudioData = [
     {
         keywords: ["graphictablet", "desk", "screen", "bureau", "jarre"],
         title: "La Jarre à Son - Home Studio Desk 2023",
-        desc: "Le meuble central du studio de production musicale, doté d'une ergonomie poussée avec sa tablette graphique intégrée et ses supports d'enceintes surélevés.<br><br><a href='https://sketchfab.com/3d-models/la-jarre-a-son-home-studio-desk-2023-538fdc1dc1c1478da6a2761ec3c6dcab' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir sur Sketchfab ↗</a>"
+        desc: "Le meuble central du studio de production musicale, doté d'une ergonomie poussée avec sa tablette graphique intégrée.<br><br><a href='https://sketchfab.com/3d-models/la-jarre-a-son-home-studio-desk-2023-538fdc1dc1c1478da6a2761ec3c6dcab' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir sur Sketchfab ↗</a>"
     },
     {
         keywords: ["chair", "chaise", "tabouret", "stool", "wheelchair", "fauteuil"],
         title: "Fauteuil de Direction Ergonomique",
-        desc: "Siège de bureau haut de gamme réglable avec accoudoirs, offrant un soutien parfait de la colonne pour travailler confortablement durant les longues sessions de production.<br><br><a href='https://www.jpg.fr/fauteuils-de-direction_sku70961-00J.html' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir le fauteuil sur JPG ↗</a>"
+        desc: "Siège de bureau réglable avec accoudoirs, offrant un soutien parfait de la colonne pour travailler confortablement.<br><br><a href='https://www.jpg.fr/fauteuils-de-direction_sku70961-00J.html' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir le fauteuil sur JPG ↗</a>"
     },
     {
         keywords: ["cushion", "coussin", "pillow"],
         title: "Coussin Décoratif Pokar",
-        desc: `Coussin de confort coloré (40x40 Orange), parfait pour apporter une touche de design et optimiser l'assise dans l'espace détente du studio.<br><br>
-              <a href="https://pokar.fr/fr/product/1123-coussin-decoratif-pour-palettes-40x40-orange" target="_blank" style="color:#00d2ff;font-weight:600;">Voir sur Pokar ↗</a>`
+        desc: `Coussin de confort coloré (40x40 Orange), parfait pour apporter une touche de design à l'espace lounge.<br><br><a href="https://pokar.fr/fr/product/1123-coussin-decoratif-pour-palettes-40x40-orange" target="_blank" style="color:#00d2ff;font-weight:600;">Voir sur Pokar ↗</a>`
     }
 ];
 
@@ -508,16 +364,15 @@ function getObjectData(nameLower) {
     if (octopre2ObjectsList.includes(nameLower)) return octopre2Data;
 
     for (const item of studioStudioData) {
-        if (item.keywords.some(kw => nameLower.includes(kw))) {
-            return item;
-        }
+        if (item.keywords.some(kw => nameLower.includes(kw))) return item;
     }
     return null;
 }
 
 // =========================================================================
+// 5. CHARGEMENT ET OPTIMISATION DU MODÈLE 3D
+// =========================================================================
 
-// 5. Chargement du modèle 3D
 const loader = new GLTFLoader();
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
@@ -529,57 +384,96 @@ loader.load(
         const model = gltf.scene;
         scene.add(model);
 
+        // Centrage du modèle automatiquement
         const box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
-        model.position.x += (model.position.x - center.x);
-        model.position.y += (model.position.y - center.y);
-        model.position.z += (model.position.z - center.z);
+        model.position.sub(center);
 
         const maxDim = Math.max(size.x, size.y, size.z);
-        camera.position.set(maxDim * 0.4, maxDim * 0.5, maxDim * 1.3);
+        camera.position.set(maxDim * 0.5, maxDim * 0.6, maxDim * 1.2);
         controls.target.set(0, 0, 0);
+        controls.update();
 
+        // Analyse et optimisation de la géométrie en une seule passe
         model.traverse((child) => {
             if (child.isMesh) {
-                selectableObjects.push(child);
+                // Tri pour le Raycasting interactif
+                const nameLower = child.name.toLowerCase().trim();
+                if (getObjectData(nameLower) || child.parent && getObjectData(child.parent.name.toLowerCase().trim())) {
+                    selectableObjects.push(child);
+                }
+
+                // Optimisation bas niveau du GPU (Partage des matériaux et désactivation des ombres inutiles)
+                if (child.material) {
+                    child.material.precision = "mediump"; 
+                }
+                child.matrixAutoUpdate = false; 
+                child.updateMatrix();
             }
         });
-        console.log("Scanner de Studio prêt.");
+        
+        // Forcer un premier rendu complet
+        requestAnimationFrame(render);
     }
 );
 
 // =========================================================================
-// 6. LE SCANNER DE SCÈNE (EN BAS À DROITE)
+// 6. LOGIQUE INTERACTIVE & EFFETS VISUELS DISCRETS
 // =========================================================================
 
-const selectionBox = new SelectionBox(camera, scene);
-const helper = new SelectionHelper(renderer, 'selectBox');
-
-const namesPanel = document.createElement('div');
-namesPanel.id = 'extraction-panel';
-namesPanel.style.position = 'absolute';
-namesPanel.style.bottom = '20px';
-namesPanel.style.right = '20px';
-namesPanel.style.width = '320px';
-namesPanel.style.maxHeight = '40vh';
-namesPanel.style.overflowY = 'auto';
-namesPanel.style.backgroundColor = 'rgba(20, 20, 25, 0.95)';
-namesPanel.style.color = '#fff';
-namesPanel.style.padding = '15px';
-namesPanel.style.fontFamily = 'monospace';
-namesPanel.style.fontSize = '12px';
-namesPanel.style.borderRadius = '8px';
-namesPanel.style.border = '1px solid #333';
-namesPanel.style.zIndex = '9999';
-namesPanel.innerHTML = `<h3>Outil d'extraction</h3><p style="color:#888; margin:5px 0;">Maintiens <b>Maj (Shift)</b> + glisse la souris pour copier de nouveaux meubles.</p><textarea id="names-output" style="width:100%; height:120px; background:#000; color:#00ffcc; border:1px solid #444; padding:5px; font-family:monospace;" readonly></textarea><button id="copy-btn" style="margin-top:5px; width:100%; padding:5px; background:#00d2ff; color:#000; border:none; font-weight:bold; cursor:pointer;">Copier la liste</button>`;
-document.body.appendChild(namesPanel);
-
-function handleSingleClick(clientX, clientY) {
+function updateMouseRaycast(clientX, clientY) {
     mouse.x = (clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(clientY / window.innerHeight) * 2 + 1;
-
     raycaster.setFromCamera(mouse, camera);
+}
+
+// Gestion des mouvements de souris (Glow au survol + Changement de curseur)
+window.addEventListener('pointermove', (event) => {
+    if (event.target.closest('#info-box')) return;
+    
+    updateMouseRaycast(event.clientX, event.clientY);
+    const intersects = raycaster.intersectObjects(selectableObjects);
+
+    if (intersects.length > 0) {
+        document.body.style.cursor = 'pointer'; // Curseur interactif
+        
+        const targetMesh = intersects[0].object;
+        if (hoveredObject !== targetMesh) {
+            resetHoverEffect(); // Enlever l'ancien effet
+            
+            // Appliquer l'effet de brillance discret
+            hoveredObject = targetMesh;
+            if (hoveredObject.material && hoveredObject.material.color) {
+                originalMaterial = hoveredObject.material.color.getHex();
+                hoveredObject.material.color.add(hoverMaterialModifier);
+            }
+            requestAnimationFrame(render);
+        }
+    } else {
+        document.body.style.cursor = 'default';
+        if (hoveredObject) {
+            resetHoverEffect();
+            requestAnimationFrame(render);
+        }
+    }
+});
+
+function resetHoverEffect() {
+    if (hoveredObject && originalMaterial !== null) {
+        if (hoveredObject.material && hoveredObject.material.color) {
+            hoveredObject.material.color.setHex(originalMaterial);
+        }
+    }
+    hoveredObject = null;
+    originalMaterial = null;
+}
+
+// Gestion des clics pour l'affichage du panneau d'information
+window.addEventListener('click', (event) => {
+    if (event.target.closest('#info-box') || event.target.closest('.site-header') || event.target.closest('button')) return; 
+
+    updateMouseRaycast(event.clientX, event.clientY);
     const intersects = raycaster.intersectObjects(selectableObjects);
 
     if (intersects.length > 0) {
@@ -597,66 +491,33 @@ function handleSingleClick(clientX, clientY) {
             document.getElementById('info-title').innerText = finalData.title;
             document.getElementById('info-description').innerHTML = finalData.desc;
             document.getElementById('info-box').classList.add('active');
-        } else {
-            document.getElementById('info-box').classList.remove('active');
         }
     } else {
         document.getElementById('info-box').classList.remove('active');
     }
-}
-
-window.addEventListener('pointerdown', function (event) {
-    if (event.target.closest('#extraction-panel') || event.target.closest('#info-box')) return;
-    if (event.shiftKey) {
-        controls.enabled = false;
-        selectionBox.startPoint.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
-    }
-});
-
-window.addEventListener('pointermove', function (event) {
-    if (helper.isDown) {
-        selectionBox.endPoint.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
-    }
-});
-
-window.addEventListener('pointerup', function (event) {
-    controls.enabled = true;
-    if (event.shiftKey) {
-        selectionBox.endPoint.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
-        const allSelected = selectionBox.select();
-        const uniqueNames = new Set();
-
-        allSelected.forEach(obj => {
-            if (obj.isMesh && obj.name) {
-                uniqueNames.add(obj.name.trim());
-                if (obj.parent && obj.parent.name && obj.parent !== scene) uniqueNames.add(obj.parent.name.trim());
-            }
-        });
-
-        document.getElementById('names-output').value = JSON.stringify(Array.from(uniqueNames).sort(), null, 2);
-    }
-});
-
-window.addEventListener('click', (event) => {
-    if (event.shiftKey || event.target.closest('#info-box') || event.target.closest('.site-header') || event.target.closest('button')) return; 
-    handleSingleClick(event.clientX, event.clientY);
-});
-
-document.getElementById('copy-btn').addEventListener('click', () => {
-    const textarea = document.getElementById('names-output');
-    textarea.select();
-    document.execCommand('copy');
-    alert('Liste copiée !');
 });
 
 document.getElementById('close-btn').addEventListener('click', () => {
     document.getElementById('info-box').classList.remove('active');
 });
 
+// =========================================================================
+// 7. RENDU INTELLIGENT (RENDERING À LA DEMANDE)
+// =========================================================================
+
+function render() {
+    renderer.render(scene, camera);
+}
+
+// L'animation ne tourne en continu QUE SI l'utilisateur bouge la caméra (Économise la batterie et l'énergie)
 function animate() {
     requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene, camera);
+    if (controls.enabled) {
+        const needsUpdate = controls.update();
+        if (needsUpdate || hoveredObject) {
+            render();
+        }
+    }
 }
 animate();
 
@@ -664,4 +525,5 @@ window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    render();
 });
