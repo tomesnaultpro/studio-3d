@@ -39,13 +39,14 @@ const mouse = new THREE.Vector2();
 let selectableObjects = [];
 
 // =========================================================================
-// 4. BASE DE DONNÉES DE LA BATTERIE (REPARTI À ZÉRO)
+// 4. LISTE COMPLÈTE ET EXACTE DES OBJETS DE TA BATTERIE (DEPUIS LE GLTF)
 // =========================================================================
 
-// Mots-clés ultra-larges pour attraper TOUTES les pièces de ton premier fichier de batterie
-const drumKeywords = [
-    "branco", "circle", "prato", "peli", "objeto", 
-    "mesh", "cylinder", "cube", "line", "drum"
+const drumExactObjects = [
+    // Structures et Fûts principaux
+    "circle", "branco", "prato", "peli", "objeto", "pedal", "suporte",
+    // Maillages de rendu physiques (Object_1700 à Object_2000 trouvés dans ton fichier)
+    "object_17", "object_18", "object_19", "object_20"
 ];
 
 const drumData = {
@@ -72,7 +73,7 @@ loader.load(
         const model = gltf.scene;
         scene.add(model);
 
-        // Centrage automatique du modèle
+        // Centrage automatique
         const box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
@@ -88,13 +89,13 @@ loader.load(
         camera.position.set(maxDim * 0.3, maxDim * 0.6, cameraZ);
         controls.target.set(0, 0, 0);
 
-        // Ajout de tous les maillages à la liste cliquable
+        // On enregistre TOUS les sous-éléments du modèle 3D
         model.traverse((child) => {
             if (child.isMesh) {
                 selectableObjects.push(child);
             }
         });
-        console.log("Système prêt. Clique sur la batterie et regarde la console F12 si ça bloque !");
+        console.log("Tous les objets du GLTF sont indexés.");
     },
     undefined,
     (error) => {
@@ -112,35 +113,22 @@ function handleInteraction(clientX, clientY) {
 
     if (intersects.length > 0) {
         let hitObject = intersects[0].object;
-        
-        // --- CODE DE SÉCURITÉ ET D'AFFICHAGE ---
-        // Appuie sur F12 dans ton navigateur pour voir s'afficher le nom exact de ce que tu cliques !
-        console.log("--- OBJET CLIQUÉ ---");
-        console.log("Nom exact de l'objet :", hitObject.name);
-        if (hitObject.parent) {
-            console.log("Nom exact du parent :", hitObject.parent.name);
-        }
-
         let current = hitObject;
         let finalData = null;
 
-        // On remonte l'arborescence pour voir si le nom correspond à nos mots-clés de batterie
+        // REMONTÉE ET VÉRIFICATION DE TOUTE LA HIÉRARCHIE DE L'OBJET CLIQUÉ
         while (current && current !== scene) {
             let nameLower = current.name.toLowerCase().trim();
             
-            // Si le nom contient un de nos mots-clés ou s'il s'agit d'un objet anonyme supérieur (généralement lié à la batterie dans la zone haute des IDs)
-            const isKeywordMatch = drumKeywords.some(keyword => nameLower.includes(keyword));
-            const matchNum = nameLower.match(/object_(\d+)/);
-            const isIdMatch = matchNum ? (parseInt(matchNum[1], 10) >= 1700 && parseInt(matchNum[1], 10) <= 2000) : false;
-
-            if (isKeywordMatch || isIdMatch) {
+            // Si le nom du maillage ou de l'un de ses parents contient un mot de la liste exacte
+            if (drumExactObjects.some(keyword => nameLower.includes(keyword))) {
                 finalData = drumData;
                 break;
             }
             current = current.parent;
         }
 
-        // Affichage dynamique dans le volet HTML
+        // Affichage du panel
         if (finalData) {
             document.getElementById('info-title').innerText = finalData.title;
             document.getElementById('info-description').innerHTML = finalData.desc;
