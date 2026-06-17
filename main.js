@@ -151,8 +151,8 @@ const micData = {
 const headphoneObjectsList = [
   "aanwpkmfljrfwqj", "aexpvrshrbaarooz", "bnozvcafckcmanz", "djdgbrevlkseknl", 
   "fzpyptjpuzbycjw", "huobrxkxkekuwxx", "huxnidmrqhpdtej", "ihefvqmczhpaduy", 
-  "jdajisnyuduqgzb", "juhozdrocibfkqg", "lswgfsweioaicgt", "object_162", 
-  "object_164", "object_169", "object_170", "pndaaljhbshkuws", "qvkyuxluhiwizge", 
+  "jdajisnyuduqgzb", "juhozdrocibfkqg", "lswgfsweioaicgt", 
+  "object_169", "object_170", "pndaaljhbshkuws", "qvkyuxluhiwizge", 
   "tovohyqezchyzgl", "wdmisgpfbmqrdoh", "wwrkmzfxzwaccgu", "wwtyjswgshsanes", 
   "xiphiahsthjzhhw", "ygrsyuxvgxlggro", "ymagkzdkmtwuqje", "zczolifjlvletmq", 
   "zczolifjlvltcmq", "zhebfjyaxlhlsle", "zdaqqruptsemflo", "alkkbnxysoolingi", 
@@ -338,13 +338,13 @@ const ipadProObjectsList = [
 
 const ipadProData = {
     title: "Apple iPad Pro, Kiosque Space & Apple Pencil Pro",
-    desc: `Tablette professionnelle iPad Pro ultra-puissante installée de manière sécurisée dans un kiosque de protection Space Enclosure Maclocks. Cet ensemble de régie haut de gamme est complété par l'Apple Pencil Pro, idéal pour l'édition de partitions numériques, le dessin technique ou les commandes DAW tactiles micrométriques.<br><br>
+    desc: `Tablette professionnelle iPad Pro ultra-puissante installée de manière sécurisée dans un kiosque de protection Space Enclosure Maclocks. Cet ensemble de régie haut de gamme est complété by l'Apple Pencil Pro, idéal pour l'édition de partitions numériques, le dessin technique ou les commandes DAW tactiles micrométriques.<br><br>
           <a href="https://www.apple.com/fr/ipad-pro/" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Découvrir l'iPad Pro sur Apple ↗</a><br>
           <a href="https://www.maclocks.eu/fr/space-ipad-enclosure-kiosk.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir la Borne Kiosque Space sur Maclocks ↗</a><br>
           <a href="https://www.apple.com/fr/shop/product/mx2d3zm/a/apple-pencil-pro" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'Apple Pencil Pro sur l'Apple Store ↗</a>`
 };
 
-// --- Q. ÉCRAN ULTRA-LARGE LG & SUPPORT DE TABLE JPG (Mis à jour) ---
+// --- Q. ÉCRAN ULTRA-LARGE LG & SUPPORT DE TABLE JPG ---
 const jpgScreenObjectsList = [
   "object_78", "object_80", "object_82", "object_83", "object_85", "object_86", "object_88", "object_89"
 ];
@@ -371,7 +371,97 @@ const kmMicArmData = {
           </a>`
 };
 
-// --- S. RECHERCHE AUTOMATIQUE / MOTS-CLÉS (Éléments restants) ---
+// --- S. PRÉAMPLIFICATEUR À LAMPES ART TUBE PREAMP SYSTEM ---
+const artPreampObjectsList = [
+  "object_162", "object_163", "object_164", "object_172", "object_173"
+];
+
+const artPreampData = {
+    title: "ART Tube PreAmp System",
+    desc: `Préamplificateur de studio à lampes haut de gamme conçu pour réchauffer le signal audio des voix et instruments. Il apporte une saturation harmonique douce et une compression naturelle recherchées lors des prises de son professionnelles.<br><br>
+          <a href="https://www.thomann.fr/art_tube_preamp_system.htm" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir le Préampli sur Thomann ↗
+          </a>`
+};
+
+// --- T. CONDITIONNEUR DE COURANT FURMAN M-10x E ---
+const furmanPowerObjectsList = [
+  "object_182", "object_183"
+];
+
+const furmanPowerData = {
+    title: "Conditionneur d'Alimentation Furman M-10x E",
+    desc: `Stabilisateur et purificateur de réseau électrique au format rack 19". Essentiel en studio, il protège tout le matériel sensible contre les surtensions et filtre les bruits de fond secteur (interférences RFI/EMI) pour assurer un signal audio d'une clarté irréprochable.<br><br>
+          <a href="https://www.thomann.fr/furman_m10x_e.htm" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir le Furman sur Thomann ↗
+          </a>`
+};
+
+// --- U. AMPLIFICATEUR STÉRÉO CONNECTÉ DENON DRA-900H ---
+const denonAmpliObjectsList = [
+  "object_8", "object_9", "object_10"
+];
+
+const denonAmpliData = {
+    title: "Amplificateur Stéréo Réseau Denon DRA-900H",
+    desc: `Ampli audio-vidéo connecté haute fidélité développant 145W par canal. Doté d'une section HDMI 8K de pointe et de l'écosystème HEOS intégré, il sert de hub central pour alimenter les enceintes de monitoring passives et diffuser des flux haute résolution.<br><br>
+          <a href="https://www.futureland.fr/amplificateur-integre-stereo/45451-171845-denon-dra-900h.html" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Découvrir l'Ampli sur Futureland ↗
+          </a>`
+};
+
+// --- V. PATCHBAY STUDIO NEUTRIK NYS-SPPL1 (Nouvel ajout) ---
+const neutrikPatchbayObjectsList = [
+  "object_166", "object_167", "object_185", "object_186"
+];
+
+const neutrikPatchbayData = {
+    title: "Patchbay Neutrik NYS-SPPL1",
+    desc: `Baie de brassage analogique rackable 19" équipée de 48 connecteurs Jack 6,35 mm. C'est le centre névralgique de routage du studio, permettant d'interconnecter rapidement et de manière flexible les micros, les préamplis et la carte son sans manipuler les câbles à l'arrière.<br><br>
+          <a href="https://www.thomann.fr/neutrik_nyssppl1.htm" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir la Patchbay sur Thomann ↗
+          </a>`
+};
+
+// --- W. PREAMP MULTI-CANAUX FOCUSRITE SCARLETT OCTOPRE - UNITÉ ÉTAGE 1 (Nouvel ajout) ---
+const octopre1ObjectsList = [
+  "object_175", "object_176"
+];
+
+const octopre1Data = {
+    title: "Focusrite Scarlett OctoPre (Unité 1)",
+    desc: `Préamplificateur micro à 8 canaux de haute qualité intégrant des convertisseurs AN/NA de précision 24 bits / 192 kHz et une connectique ADAT optique. Idéal pour étendre les entrées de la régie pour des sessions d'enregistrement de groupe.<br><br>
+          <a href="https://www.thomann.fr/focusrite_scarlett_octopre.htm" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir l'OctoPre sur Thomann ↗
+          </a>`
+};
+
+// --- X. PREAMP MULTI-CANAUX FOCUSRITE SCARLETT OCTOPRE - UNITÉ ÉTAGE 2 (Nouvel ajout) ---
+const octopre2ObjectsList = [
+  "object_178", "object_179", "object_180"
+];
+
+const octopre2Data = {
+    title: "Focusrite Scarlett OctoPre (Unité 2)",
+    desc: `Seconde unité de préamplification Scarlett OctoPre montée en série. Elle double la capacité d'acquisition en étendant la régie à 16 préamplis micro Focusrite simultanés câblés en ADAT pour la capturation complète et multipiste d'une batterie acoustique.<br><br>
+          <a href="https://www.thomann.fr/focusrite_scarlett_octopre.htm" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir l'OctoPre sur Thomann ↗
+          </a>`
+};
+
+// --- Y. RECHERCHE AUTOMATIQUE / MOTS-CLÉS ---
 const studioStudioData = [
     {
         keywords: ["graphictablet", "desk", "screen", "bureau", "jarre"],
@@ -410,6 +500,12 @@ function getObjectData(nameLower) {
     if (ipadProObjectsList.includes(nameLower)) return ipadProData;
     if (jpgScreenObjectsList.includes(nameLower)) return jpgScreenData;
     if (kmMicArmObjectsList.includes(nameLower)) return kmMicArmData;
+    if (artPreampObjectsList.includes(nameLower)) return artPreampData;
+    if (furmanPowerObjectsList.includes(nameLower)) return furmanPowerData;
+    if (denonAmpliObjectsList.includes(nameLower)) return denonAmpliData;
+    if (neutrikPatchbayObjectsList.includes(nameLower)) return neutrikPatchbayData;
+    if (octopre1ObjectsList.includes(nameLower)) return octopre1Data;
+    if (octopre2ObjectsList.includes(nameLower)) return octopre2Data;
 
     for (const item of studioStudioData) {
         if (item.keywords.some(kw => nameLower.includes(kw))) {
