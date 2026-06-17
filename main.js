@@ -38,7 +38,7 @@ const mouse = new THREE.Vector2();
 let selectableObjects = [];
 
 // =========================================================================
-// 4. BASE DE DONNÉES COMPLÈTE DU STUDIO
+// 4. BASE DE DONNÉES COMPLÈTE DU STUDIO (AVEC TOUS LES LIENS)
 // =========================================================================
 
 // --- A. LA BATTERIE (Ta liste exacte validée) ---
@@ -86,7 +86,7 @@ const drumObjectsList = [
 const drumData = {
     title: "Pearl Roadshow 22\" Plus Jet Black",
     desc: `Batterie acoustique complète de la série Roadshow, idéale pour les batteurs exigeants. Elle comprend des fûts robustes en peuplier, un accastillage complet et des cymbales pour un punch et une résonance remarquables au studio.<br><br>
-          <a href="https://www.thomann.fr/pearl_roadshow_22_plus_jet_black.htm?gad_source=1&gad_campaignid=1544038001&gclid=Cj0KCQjwornRBhCrARIsAON5exHpOQMgj_0FgzB6rgKyX7STbq3g1etN4JAWFiNKskSyCU7syJFgaa4aAjIhEALw_wcB" 
+          <a href="https://www.thomann.fr/pearl_roadshow_22_plus_jet_black.htm" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
              Voir le produit sur Thomann ↗
@@ -102,23 +102,23 @@ const studioStudioData = [
     },
     {
         keywords: ["speaker", "enceinte", "monitor", "krk", "yamaha"],
-        title: "Moniteurs de Studio Pro",
-        desc: "Enceintes de monitoring actives haute fidélité assurant une réponse en fréquence neutre et ultra-précise pour le mixage et le mastering.<br><br><a href='https://www.thomann.fr' target='_blank' style='color:#00d2ff;font-weight:600;'>Découvrir sur Thomann ↗</a>"
+        title: "KRK ROKIT 5 G4",
+        desc: "Enceintes de monitoring de studio actives professionnelles. Parfaites pour obtenir un mixage précis et clair grâce à leur égalisation graphique pilotée par DSP.<br><br><a href='https://www.thomann.fr/krk_rokit_rp5_g4.htm' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir sur Thomann ↗</a>"
     },
     {
-        keywords: ["headphone", "casque", "audiotechnica", "beyer"],
-        title: "Casque de Monitoring Professionnel",
-        desc: "Casque de studio de référence offrant une isolation acoustique maximale et un confort optimal pour les longues sessions d'enregistrement.<br><br><a href='https://www.thomann.fr' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir sur Thomann ↗</a>"
+        keywords: ["headphone", "casque", "audiotechnica", "beyer", "audio-technica"],
+        title: "Audio-Technica ATH-M50x",
+        desc: "Casque de studio professionnel de référence offrant une clarté exceptionnelle sur une gamme de fréquences étendue, avec des basses profondes et précises.<br><br><a href='https://www.thomann.fr/audio_technica_ath_m50_x.htm' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir sur Thomann ↗</a>"
     },
     {
         keywords: ["sofa", "couch", "canap", "fauteuil"],
         title: "Canapé Lounge Studio",
-        desc: "Espace détente confortable installé à l'arrière de la régie pour accueillir les artistes et écouter les mixages dans des conditions réelles de salon."
+        desc: "Espace détente confortable installé à l'arrière de la régie pour accueillir les artistes et écouter les mixages dans des conditions réelles de salon.<br><br><a href='https://www.thomann.fr' target='_blank' style='color:#00d2ff;font-weight:600;'>Visiter Thomann ↗</a>"
     },
     {
-        keywords: ["chair", "chaise", "tabouret", "stool"],
-        title: "Chaise Ergonomique de Production",
-        desc: "Siège réglable de haute qualité conçu pour maintenir une posture saine devant la station de travail audio numérique (STAN)."
+        keywords: ["chair", "chaise", "tabouret", "stool", "wheelchair", "fauteuil"],
+        title: "Fauteuil de Bureau Ergonomique",
+        desc: "Siège réglable haut de gamme monté sur roulettes, conçu pour maintenir une posture idéale devant la console pendant les longues sessions de production.<br><br><a href='https://www.thomann.fr' target='_blank' style='color:#00d2ff;font-weight:600;'>Visiter Thomann ↗</a>"
     },
     {
         keywords: ["cushion", "coussin", "pillow"],
@@ -174,7 +174,7 @@ loader.load(
 );
 
 // =========================================================================
-// 6. LE SCANNER DE SCÈNE (CORRIGÉ : PLACÉ EN BAS À DROITE)
+// 6. LE SCANNER DE SCÈNE (OUTIL DÉPLACÉ EN BAS À DROITE)
 // =========================================================================
 
 const selectionBox = new SelectionBox(camera, scene);
@@ -183,7 +183,7 @@ const helper = new SelectionHelper(renderer, 'selectBox');
 const namesPanel = document.createElement('div');
 namesPanel.id = 'extraction-panel';
 namesPanel.style.position = 'absolute';
-namesPanel.style.bottom = '20px'; // Déplacé en bas pour éviter de cacher ton volet d'info
+namesPanel.style.bottom = '20px'; // Placé tout en bas à droite pour laisser le haut libre !
 namesPanel.style.right = '20px';
 namesPanel.style.width = '320px';
 namesPanel.style.maxHeight = '40vh';
