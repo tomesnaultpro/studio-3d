@@ -246,7 +246,7 @@ const screenData = {
           <a href="https://www.manutan.fr/fr/maf/bras-porte-ecran-articule-ergonomique-simple-noir-manutan-expert-ac28285" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Bras sur Manutan ↗</a>`
 };
 
-// --- J. SONY ALPHA 7 III & BRAS SMALLRIG (Nouvel ajout fusionné) ---
+// --- J. SONY ALPHA 7 III & BRAS SMALLRIG ---
 const cameraObjectsList = [
   "object_50", "object_51", "object_52", "object_54", "object_55", 
   "object_57", "object_58", "object_59", "object_42", "object_43", "object_44"
@@ -254,12 +254,12 @@ const cameraObjectsList = [
 
 const cameraData = {
     title: "Sony Alpha 7 III & Bras Magique SmallRig",
-    desc: `Caméra hybride plein format hautes performances associée à un objectif 28-70mm, suspendue solidement par un bras magique articulé articulé SmallRig (11"). Parfait pour capturer des vidéos de qualité professionnelle en régie ou filmer des sessions de podcast.<br><br>
+    desc: `Caméra hybride plein format hautes performances associée à un objectif 28-70mm, suspendue solidement par un bras magique articulé SmallRig (11"). Parfait pour capturer des vidéos de qualité professionnelle en régie ou filmer des sessions de podcast.<br><br>
           <a href="https://www.digit-photo.com/SONY-Alpha-7-III-28-70mm-f-3-5-5-6-SEL-rSONYILCE7M3KBCEC.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir la Caméra sur Digit-Photo ↗</a><br>
           <a href="https://www.digit-photo.com/SMALLRIG-5309-Support-Bras-Magique-11-rSMALLRIG5309.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Bras SmallRig sur Digit-Photo ↗</a>`
 };
 
-// --- K. ELGATO STREAM DECK MK2 (Nouvel ajout) ---
+// --- K. ELGATO STREAM DECK MK2 ---
 const streamDeckObjectsList = [
   "object_224", "object_225", "object_226"
 ];
@@ -274,7 +274,7 @@ const streamDeckData = {
           </a>`
 };
 
-// --- L. MICRO DE STUDIO PODCAST SHURE SM7B (Nouvel ajout) ---
+// --- L. MICRO DE STUDIO PODCAST SHURE SM7B ---
 const shureMicObjectsList = [
   "object_114", "object_117", "object_118", "object_120", "object_122", "object_124"
 ];
@@ -289,7 +289,37 @@ const shureMicData = {
           </a>`
 };
 
-// --- M. RECHERCHE AUTOMATIQUE / MOTS-CLÉS (Éléments restants) ---
+// --- M. ENSEMBLE CLAVIER & SOURIS CHERRY STREAM DESKTOP (Nouvel ajout) ---
+const cherryKeyboardObjectsList = [
+  "object_154", "object_156", "object_157", "object_159", "object_160"
+];
+
+const cherryKeyboardData = {
+    title: "Ensemble Clavier & Souris Sans Fil Cherry Stream Desktop",
+    desc: `Ensemble de bureau sans fil et rechargeable combinant un confort de frappe exceptionnel (technologie de ciseaux Cherry SX) et une souris ergonomique précise à 6 boutons. Conçu pour une utilisation intensive, silencieuse et fluide en production informatique.<br><br>
+          <a href="https://www.manutan.fr/fr/maf/ensemble-clavier-souris-sans-fil-rechargeable-stream-desktop-cherry-ab28075" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir l'ensemble Cherry sur Manutan ↗
+          </a>`
+};
+
+// --- N. SUPPORT D'ORDINATEUR ERGONOMIQUE NETWALKER (Nouvel ajout) ---
+const netwalkerStandObjectsList = [
+  "object_5"
+];
+
+const netwalkerStandData = {
+    title: "Support Ergonomique pour Ordinateur Netwalker",
+    desc: `Support élévateur robuste conçu pour surélever l'ordinateur portable ou les périphériques à une hauteur de vue et de manipulation optimale. Favorise une meilleure posture de travail tout en libérant de l'espace sur la surface du bureau principal.<br><br>
+          <a href="https://www.netwalkerstore.com/PBSCProduct.asp?ItmID=41946952&AccID=18244&PGFLngID=0" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir le support sur Netwalker Store ↗
+          </a>`
+};
+
+// --- O. RECHERCHE AUTOMATIQUE / MOTS-CLÉS (Éléments restants) ---
 const studioStudioData = [
     {
         keywords: ["graphictablet", "desk", "screen", "bureau", "jarre"],
@@ -322,6 +352,8 @@ function getObjectData(nameLower) {
     if (cameraObjectsList.includes(nameLower)) return cameraData;
     if (streamDeckObjectsList.includes(nameLower)) return streamDeckData;
     if (shureMicObjectsList.includes(nameLower)) return shureMicData;
+    if (cherryKeyboardObjectsList.includes(nameLower)) return cherryKeyboardData;
+    if (netwalkerStandObjectsList.includes(nameLower)) return netwalkerStandData;
 
     for (const item of studioStudioData) {
         if (item.keywords.some(kw => nameLower.includes(kw))) {
