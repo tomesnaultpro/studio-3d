@@ -39,11 +39,14 @@ const mouse = new THREE.Vector2();
 let selectableObjects = [];
 
 // =========================================================================
-// 4. BASE DE DONNÉES DU STUDIO (REPARTI À ZÉRO - UNIQUEMENT LA BATTERIE)
+// 4. BASE DE DONNÉES DE LA BATTERIE (REPARTI À ZÉRO)
 // =========================================================================
 
-// Tous les mots-clés de composants présents dans ton premier fichier GLTF de batterie
-const drumKeywords = ["branco", "circle", "prato", "peli", "objeto", "mesh", "cylinder", "cube", "line"];
+// Mots-clés ultra-larges pour attraper TOUTES les pièces de ton premier fichier de batterie
+const drumKeywords = [
+    "branco", "circle", "prato", "peli", "objeto", 
+    "mesh", "cylinder", "cube", "line", "drum"
+];
 
 const drumData = {
     title: "Pearl Roadshow 22\" Plus Jet Black",
@@ -54,24 +57,6 @@ const drumData = {
              Voir le produit sur Thomann ↗
           </a>`
 };
-
-// Fonction de détection globale de la batterie
-function isDrumMesh(nameLower) {
-    // 1. Si le nom contient l'un des mots-clés exacts de ton fichier de batterie
-    if (drumKeywords.some(keyword => nameLower.includes(keyword))) {
-        return true;
-    }
-    
-    // 2. Sécurité par rapport aux ID de ton fichier principal (les objets anonymes de la batterie)
-    const match = nameLower.match(/object_(\d+)/);
-    if (match) {
-        const num = parseInt(match[1], 10);
-        // Zone où se situe l'intégralité du bloc batterie dans le studio
-        return (num >= 1700 && num <= 2000);
-    }
-    
-    return false;
-}
 
 // =========================================================================
 
@@ -109,7 +94,7 @@ loader.load(
                 selectableObjects.push(child);
             }
         });
-        console.log("Système synchronisé. Tous les objets de la batterie sont désormais actifs !");
+        console.log("Système prêt. Clique sur la batterie et regarde la console F12 si ça bloque !");
     },
     undefined,
     (error) => {
@@ -127,14 +112,28 @@ function handleInteraction(clientX, clientY) {
 
     if (intersects.length > 0) {
         let hitObject = intersects[0].object;
+        
+        // --- CODE DE SÉCURITÉ ET D'AFFICHAGE ---
+        // Appuie sur F12 dans ton navigateur pour voir s'afficher le nom exact de ce que tu cliques !
+        console.log("--- OBJET CLIQUÉ ---");
+        console.log("Nom exact de l'objet :", hitObject.name);
+        if (hitObject.parent) {
+            console.log("Nom exact du parent :", hitObject.parent.name);
+        }
+
         let current = hitObject;
         let finalData = null;
 
-        // On remonte l'arborescence pour valider si c'est un morceau de la batterie
+        // On remonte l'arborescence pour voir si le nom correspond à nos mots-clés de batterie
         while (current && current !== scene) {
             let nameLower = current.name.toLowerCase().trim();
             
-            if (isDrumMesh(nameLower)) {
+            // Si le nom contient un de nos mots-clés ou s'il s'agit d'un objet anonyme supérieur (généralement lié à la batterie dans la zone haute des IDs)
+            const isKeywordMatch = drumKeywords.some(keyword => nameLower.includes(keyword));
+            const matchNum = nameLower.match(/object_(\d+)/);
+            const isIdMatch = matchNum ? (parseInt(matchNum[1], 10) >= 1700 && parseInt(matchNum[1], 10) <= 2000) : false;
+
+            if (isKeywordMatch || isIdMatch) {
                 finalData = drumData;
                 break;
             }
@@ -147,7 +146,6 @@ function handleInteraction(clientX, clientY) {
             document.getElementById('info-description').innerHTML = finalData.desc;
             document.getElementById('info-box').classList.add('active');
         } else {
-            // Si on clique ailleurs sur un objet non configuré, on ferme le volet
             document.getElementById('info-box').classList.remove('active');
         }
     } else {
