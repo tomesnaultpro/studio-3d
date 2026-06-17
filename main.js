@@ -38,7 +38,7 @@ const mouse = new THREE.Vector2();
 let selectableObjects = [];
 
 // =========================================================================
-// 4. BASE DE DONNÉES COMPLÈTE DU STUDIO (AVEC TES ANCIENS MEUBLES)
+// 4. BASE DE DONNÉES COMPLÈTE DU STUDIO
 // =========================================================================
 
 // --- A. LA BATTERIE (Ta liste exacte validée) ---
@@ -83,7 +83,17 @@ const drumObjectsList = [
   "object_950"
 ];
 
-// Mots-clés des autres modules pour une détection intelligente par nom
+const drumData = {
+    title: "Pearl Roadshow 22\" Plus Jet Black",
+    desc: `Batterie acoustique complète de la série Roadshow, idéale pour les batteurs exigeants. Elle comprend des fûts robustes en peuplier, un accastillage complet et des cymbales pour un punch et une résonance remarquables au studio.<br><br>
+          <a href="https://www.thomann.fr/pearl_roadshow_22_plus_jet_black.htm?gad_source=1&gad_campaignid=1544038001&gclid=Cj0KCQjwornRBhCrARIsAON5exHpOQMgj_0FgzB6rgKyX7STbq3g1etN4JAWFiNKskSyCU7syJFgaa4aAjIhEALw_wcB" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir le produit sur Thomann ↗
+          </a>`
+};
+
+// --- B. LES AUTRES ÉLÉMENTS DU STUDIO ---
 const studioStudioData = [
     {
         keywords: ["graphictablet", "desk", "screen", "bureau", "jarre"],
@@ -117,17 +127,6 @@ const studioStudioData = [
     }
 ];
 
-const drumData = {
-    title: "Pearl Roadshow 22\" Plus Jet Black",
-    desc: `Batterie acoustique complète de la série Roadshow, idéale pour les batteurs exigeants. Elle comprend des fûts robustes en peuplier, un accastillage complet et des cymbales pour un punch et une résonance remarquables au studio.<br><br>
-          <a href="https://www.thomann.fr/pearl_roadshow_22_plus_jet_black.htm?gad_source=1&gad_campaignid=1544038001&gclid=Cj0KCQjwornRBhCrARIsAON5exHpOQMgj_0FgzB6rgKyX7STbq3g1etN4JAWFiNKskSyCU7syJFgaa4aAjIhEALw_wcB" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le produit sur Thomann ↗
-          </a>`
-};
-
-// Fonction globale pour trouver à quel groupe un maillage appartient
 function getObjectData(nameLower) {
     if (drumObjectsList.includes(nameLower)) {
         return drumData;
@@ -175,18 +174,19 @@ loader.load(
 );
 
 // =========================================================================
-// 6. LE SCANNER DE SCÈNE (INTERFACE WINDOWS + CLIC UNIQUE)
+// 6. LE SCANNER DE SCÈNE (CORRIGÉ : PLACÉ EN BAS À DROITE)
 // =========================================================================
 
 const selectionBox = new SelectionBox(camera, scene);
 const helper = new SelectionHelper(renderer, 'selectBox');
 
 const namesPanel = document.createElement('div');
+namesPanel.id = 'extraction-panel';
 namesPanel.style.position = 'absolute';
-namesPanel.style.top = '20px';
+namesPanel.style.bottom = '20px'; // Déplacé en bas pour éviter de cacher ton volet d'info
 namesPanel.style.right = '20px';
 namesPanel.style.width = '320px';
-namesPanel.style.maxHeight = '45vh';
+namesPanel.style.maxHeight = '40vh';
 namesPanel.style.overflowY = 'auto';
 namesPanel.style.backgroundColor = 'rgba(20, 20, 25, 0.95)';
 namesPanel.style.color = '#fff';
@@ -230,7 +230,7 @@ function handleSingleClick(clientX, clientY) {
 }
 
 window.addEventListener('pointerdown', function (event) {
-    if (event.target.closest('#names-panel') || event.target.closest('#info-box')) return;
+    if (event.target.closest('#extraction-panel') || event.target.closest('#info-box')) return;
     if (event.shiftKey) {
         controls.enabled = false;
         selectionBox.startPoint.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
