@@ -38,7 +38,7 @@ const mouse = new THREE.Vector2();
 let selectableObjects = [];
 
 // =========================================================================
-// 4. BASE DE DONNÉES COMPLÈTE ET VALIDÉE DU STUDIO
+// 4. BASE DE DONNÉES COMPLÈTE ET CORRIGÉE DU STUDIO
 // =========================================================================
 
 // --- A. LA BATTERIE ---
@@ -114,7 +114,7 @@ const speakerData = {
           </a>`
 };
 
-// --- C. CANAPÉ DESIGN BONO (Ta liste exacte validée) ---
+// --- C. CANAPÉ DESIGN BONO ---
 const sofaObjectsList = [
   "box009_gray_fabric_0", "cylinder001_metall_0", "line001_metall_0", 
   "line002_metall_0", "line009_metall_0", "line010_metall_0",
@@ -124,7 +124,7 @@ const sofaObjectsList = [
 
 const sofaData = {
     title: "Canapé Design 3 Places BONO",
-    desc: `Canapé élégant en tissu effet velours texturé gris. Sa structure moderne et assise confortable offrent un espace lounge idéal à l'arrière du studio pour accueillir les artistes pendant les phases d'écoute.<br><br>
+    desc: `Canapé élégant en tissu effet velours texturé gris. Sa structure moderne et son assise confortable offrent un espace lounge idéal à l'arrière du studio pour accueillir les artistes pendant les phases d'écoute.<br><br>
           <a href="https://www.miliboo.com/canape-design-3-places-tissu-effet-velours-texture-gris-bono-57597.html" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
@@ -132,17 +132,83 @@ const sofaData = {
           </a>`
 };
 
-// --- D. RECHERCHE PAR MOTS-CLÉS (Pour les éléments restants) ---
+// --- D. MICRO ENREGISTREMENT RODE NT1-A ---
+const micObjectsList = [
+  "layer_2base__0", "layer_4mic_head__0"
+];
+
+const micData = {
+    title: "Rode NT1-A Complete Vocal Bundle",
+    desc: `Le microphone de studio d'enregistrement de référence par excellence. Ce pack complet comprend le micro à condensateur large membrane NT1-A avec sa suspension araignée, son filtre anti-pop intégré et son écran acoustique d'isolation pour des prises voix impeccables.<br><br>
+          <a href="https://www.thomann.fr/rode_nt1_a_compl._micscreen_bundle.htm" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir le pack Micro sur Thomann ↗
+          </a>`
+};
+
+// --- E. CASQUE AUDIO APPLE AIRPODS MAX ---
+const headphoneObjectsList = [
+  "aanwpkmfljrfwqj", "aexpvrshrbaaroo", "bnozvcfckcmanz", "djdgbrevlkseknl", 
+  "fzpyptjpuzbycjw", "huobrxkxkekuwxx", "huxnidmrqhpdtej", "ihefvqmczhpaduy", 
+  "jdajisnyuduqgzb", "juhozdroclbfkqg", "lswgfsweioaicgt", "object_162", 
+  "object_164", "object_169", "object_170", "object_172", "object_173", 
+  "pndaaljhshkuws", "qvkyuxluhiwizge", "tovohyqezchyzgl", "wdmisgpfbmqrdoh", 
+  "wwrkmzfxzwaccgu", "wwtyjswgshsanes", "xiphiahsthjzhhw", "ygrsyuxvgxlggro", 
+  "ymagkzdkmtwuqje", "zczolifjlvletmq", "zhebfjyaxlhlsle", "zdaqqruptsemflo", 
+  "alkkbnxysoolingi", "ecebpffksspuio", "gwzdgrmvilveqvj", "hexwygwownpqirf", 
+  "lfgkqhirxtridbu", "ltnuleuwbsqyabk", "sytnpmcquioflqg", "syukhlwqwhfyqza", 
+  "uofrdwfacejqwov", "vuggowiguweeaqg"
+];
+
+const headphoneData = {
+    title: "Apple AirPods Max - Bleu",
+    desc: `Casque supra-auriculaire haut de gamme associant un son haute fidélité à la technologie de réduction active du bruit leader du marché. Idéal pour s'isoler ou effectuer des vérifications d'écoute nettes en studio avec un confort textile d'exception.<br><br>
+          <a href="https://www.apple.com/fr/shop/buy-airpods/airpods-max-2/bleu" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir sur l'Apple Store ↗
+          </a>`
+};
+
+// --- F. APPLE iPHONE 15 PRO ---
+const phoneObjectsList = [
+  "object_101001", "object_105", "object_107001", "object_110001", "object_11001", 
+  "object_112", "object_114001", "object_116001", "object_118001", "object_120001", 
+  "object_122002", "object_126001", "object_128001", "object_130", "object_132", 
+  "object_134001", "object_136001", "object_138001", "object_140002", "object_1401", 
+  "object_142", "object_144", "object_147", "object_149002", "object_151001", 
+  "object_153", "object_155001", "object_157001", "object_159001", "object_16", 
+  "object_161001", "object_163001", "object_165", "object_167002", "object_169001", 
+  "object_171", "object_174", "object_176002", "object_178001", "object_180001", 
+  "object_1801", "object_182002", "object_184", "object_186001", "object_188002", 
+  "object_190", "object_192", "object_195", "object_197001", "object_199001", 
+  "object_20002", "object_202001", "object_204001", "object_206002", "object_2201", 
+  "object_24", "object_27", "object_29001", "object_31", "object_33", 
+  "object_35001", "object_37", "object_39", "object_41001", "object_44002", 
+  "object_47001", "object_49", "object_51001", "object_53001", "object_55001", 
+  "object_57001", "object_59002", "object_62002", "object_64", "object_67", 
+  "object_69001", "object_71002", "object_73001", "object_76", "object_78001", 
+  "object_81", "object_83002", "object_85001", "object_87", "object_90", 
+  "object_92001", "object_94", "object_96", "object_98002"
+];
+
+const phoneData = {
+    title: "Apple iPhone 15 Pro (256 Go) - Noir",
+    desc: `Smartphone de contrôle ultra-puissant doté du châssis en titane de qualité aérospatiale et de la puce A17 Pro. Il sert de télécommande et d'outil multimédia parfait pour piloter la diffusion, enregistrer des sessions ou gérer la DAW à distance via le réseau du studio.<br><br>
+          <a href="https://www.darty.com/nav/achat/telephonie/telephone_mobile_seul/iphone/apple_iph15pro_256go_noir.html" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir l'iPhone sur Darty ↗
+          </a>`
+};
+
+// --- G. RECHERCHE PAR MOTS-CLÉS (Pour les meubles restants) ---
 const studioStudioData = [
     {
         keywords: ["graphictablet", "desk", "screen", "bureau", "jarre"],
         title: "La Jarre à Son - Home Studio Desk 2023",
         desc: "Le meuble central du studio de production musicale, doté d'une ergonomie poussée avec sa tablette graphique intégrée et ses supports d'enceintes surélevés.<br><br><a href='https://sketchfab.com/3d-models/la-jarre-a-son-home-studio-desk-2023-538fdc1dc1c1478da6a2761ec3c6dcab' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir sur Sketchfab ↗</a>"
-    },
-    {
-        keywords: ["headphone", "casque", "audiotechnica", "beyer", "audio-technica"],
-        title: "Audio-Technica ATH-M50x",
-        desc: "Casque de studio professionnel de référence offrant une clarté exceptionnelle sur une gamme de fréquences étendue, avec des basses profondes et précises.<br><br><a href='https://www.thomann.fr/audio_technica_ath_m50_x.htm' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir sur Thomann ↗</a>"
     },
     {
         keywords: ["chair", "chaise", "tabouret", "stool", "wheelchair", "fauteuil"],
@@ -161,6 +227,9 @@ function getObjectData(nameLower) {
     if (drumObjectsList.includes(nameLower)) return drumData;
     if (speakerObjectsList.includes(nameLower)) return speakerData;
     if (sofaObjectsList.includes(nameLower)) return sofaData;
+    if (micObjectsList.includes(nameLower)) return micData;
+    if (headphoneObjectsList.includes(nameLower)) return headphoneData;
+    if (phoneObjectsList.includes(nameLower)) return phoneData;
 
     for (const item of studioStudioData) {
         if (item.keywords.some(kw => nameLower.includes(kw))) {
