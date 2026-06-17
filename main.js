@@ -61,26 +61,26 @@ const drumObjectsList = [
   "object_1727", "object_1730", "object_1733", "object_1736", "object_1739", 
   "object_1742", "object_1745", "object_1748", "object_1751", "object_1760", 
   "object_1766", "object_1769", "object_1772", "object_1775", "object_1778", 
-  "object_1781", "object_1784", "object_1787", "object_1790", "object_179001", 
-  "object_1793", "object_182001", "object_185001", "object_188001", "object_194", 
-  "object_197", "object_20001", "object_203", "object_206001", "object_209", 
-  "object_212", "object_218001", "object_224001", "object_227", "object_230001", 
-  "object_23001", "object_233", "object_236001", "object_242", "object_245", 
-  "object_257", "object_260", "object_26001", "object_263", "object_266", 
-  "object_272", "object_281", "object_284", "object_29", "object_32001", 
-  "object_35", "object_356", "object_359", "object_362", "object_365", 
-  "object_368", "object_377", "object_38", "object_380", "object_386", 
-  "object_389", "object_392", "object_395", "object_398", "object_401", 
-  "object_404", "object_407", "object_41", "object_44001", "object_458", 
-  "object_47", "object_482", "object_50001", "object_509", "object_512", 
-  "object_515", "object_518", "object_53", "object_536", "object_56", 
-  "object_566", "object_575", "object_590", "object_629", "object_632", 
-  "object_647", "object_656", "object_659", "object_665", "object_668", 
-  "object_695", "object_704", "object_707", "object_740", "object_743", 
-  "object_746", "object_749", "object_752", "object_755", "object_758", 
-  "object_779", "object_8001", "object_803", "object_842", "object_845", 
-  "object_860", "object_869", "object_872", "object_878", "object_905", 
-  "object_950"
+  "object_1781", "object_1784", "object_1787", "object_178701", "object_1790", 
+  "object_179001", "object_1793", "object_182001", "object_185001", "object_188001", 
+  "object_194", "object_197", "object_20001", "object_203", "object_206001", 
+  "object_209", "object_212", "object_218001", "object_224001", "object_227", 
+  "object_230001", "object_23001", "object_233", "object_236001", "object_242", 
+  "object_245", "object_257", "object_260", "object_26001", "object_263", 
+  "object_266", "object_272", "object_281", "object_284", "object_29", 
+  "object_32001", "object_35", "object_356", "object_359", "object_362", 
+  "object_365", "object_368", "object_377", "object_38", "object_380", 
+  "object_386", "object_389", "object_392", "object_395", "object_398", 
+  "object_401", "object_404", "object_407", "object_41", "object_44001", 
+  "object_458", "object_47", "object_482", "object_50001", "object_509", 
+  "object_512", "object_515", "object_518", "object_53", "object_536", 
+  "object_56", "object_566", "object_575", "object_590", "object_629", 
+  "object_632", "object_647", "object_656", "object_659", "object_665", 
+  "object_668", "object_695", "object_704", "object_707", "object_740", 
+  "object_743", "object_746", "object_749", "object_752", "object_755", 
+  "object_758", "object_779", "object_8001", "object_803", "object_842", 
+  "object_845", "object_860", "object_869", "object_872", "object_878", 
+  "object_905", "object_950"
 ];
 
 const drumData = {
@@ -171,7 +171,7 @@ const headphoneData = {
           </a>`
 };
 
-// --- F. APPLE iPHONE 15 PRO (Nettoyé des objets 78-89) ---
+// --- F. APPLE iPHONE 15 PRO ---
 const phoneObjectsList = [
   "object_101001", "object_105", "object_107001", "object_110001", "object_11001", 
   "object_112", "object_114001", "object_116001", "object_118001", "object_120001", 
@@ -344,22 +344,19 @@ const ipadProData = {
           <a href="https://www.apple.com/fr/shop/product/mx2d3zm/a/apple-pencil-pro" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'Apple Pencil Pro sur l'Apple Store ↗</a>`
 };
 
-// --- Q. ÉCRAN SECONDAIRE PC & TRÉPIED DE POSTE JPG (Nouvel ajout) ---
+// --- Q. ÉCRAN ULTRA-LARGE LG & SUPPORT DE TABLE JPG (Mis à jour) ---
 const jpgScreenObjectsList = [
   "object_78", "object_80", "object_82", "object_83", "object_85", "object_86", "object_88", "object_89"
 ];
 
 const jpgScreenData = {
-    title: "Écran d'affichage PC avec Trépied de Table JPG",
-    desc: `Moniteur additionnel de retour informatique monté sur un trépied de table ajustable de chez JPG. Il offre un espace d'affichage idéal pour surveiller ses pistes d'automation, ses plugins ou ses scripts de production en cours.<br><br>
-          <a href="https://www.jpg.fr/postes-informatiques_sku01165-00J.html" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir l'équipement sur JPG ↗
-          </a>`
+    title: "Moniteur UltraWide LG & Trépied de Table JPG",
+    desc: `Moniteur additionnel de retour panoramique UltraWide de marque LG, monté sur un trépied de table ajustable fourni par JPG. C'est l'espace de travail d'affichage parfait pour surveiller en continu ses lignes de script de production, ses automations MIDI ou ses plugins de mixage audio ouverts en simultané.<br><br>
+          <a href="https://www.lg.com/fr/moniteurs/ultrawide/lg-29u511a-b-moniteur-ultrawide/" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'Écran UltraWide sur LG ↗</a><br>
+          <a href="https://www.jpg.fr/postes-informatiques_sku01165-00J.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Support/Trépied sur JPG ↗</a>`
 };
 
-// --- R. BRAS ARTICULÉ POUR MICROPHONE K&M 23868 (Nouvel ajout) ---
+// --- R. BRAS ARTICULÉ POUR MICROPHONE K&M 23868 ---
 const kmMicArmObjectsList = [
   "object_19", "object_20", "object_22", "object_25", "object_26", "object_28", "object_30", "object_32"
 ];
