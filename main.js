@@ -38,10 +38,10 @@ const mouse = new THREE.Vector2();
 let selectableObjects = [];
 
 // =========================================================================
-// 4. BASE DE DONNÉES COMPLÈTE DU STUDIO (AVEC TES CORRESPONDANCES UNIQUES)
+// 4. BASE DE DONNÉES COMPLÈTE ET CORRIGÉE DU STUDIO
 // =========================================================================
 
-// --- A. LA BATTERIE (Ta liste exacte validée) ---
+// --- A. LA BATTERIE ---
 const drumObjectsList = [
   "object_1007", "object_1013", "object_1016", "object_1022", "object_1049", 
   "object_1052", "object_1055", "object_1058", "object_1064", "object_11", 
@@ -93,24 +93,12 @@ const drumData = {
           </a>`
 };
 
-// --- B. LES ENCEINTES KRK KREATE 5 (Ta liste exacte validée) ---
+// --- B. ENCEINTES KRK + TRÉPIEDS FUSIONNÉS (Tes listes exactes) ---
 const speakerObjectsList = [
+  // Les enceintes
   "object_126", "object_135", "object_136", "object_137", "object_138", 
-  "object_140", "object_149", "object_150", "object_151", "object_152"
-];
-
-const speakerData = {
-    title: "KRK Kreate 5 (La Paire)",
-    desc: `Enceintes de monitoring actives d'une clarté légendaire. Conçues avec un woofer en Kevlar et un tweeter performant pour une fidélité sonore optimale lors de la production, du mixage ou de l'écoute critique en studio.<br><br>
-          <a href="https://www.sonovente.com/krk-kreate-5-la-paire-supports-bas-p106242.html" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Découvrir sur SonoVente ↗
-          </a>`
-};
-
-// --- C. LES PIEDS D'ENCEINTES (Ta liste exacte validée) ---
-const standObjectsList = [
+  "object_140", "object_149", "object_150", "object_151", "object_152",
+  // Les pieds / trépieds
   "object_135003", "object_136005", "object_137006", "object_138004", 
   "studiomonitorstand_studiomonitorstand_metal_0", "studiomonitorstand_studiomonitorstand_plastic_0", 
   "object_135004", "object_136007", "object_137007", "object_138005", 
@@ -118,17 +106,17 @@ const standObjectsList = [
   "studiomonitorstand_studiomontiorstand_cushion_0001", "studiomonitorstand_studiomontiorstand_cushion_0"
 ];
 
-const standData = {
-    title: "Supports de Moniteurs Studio",
-    desc: `Pieds de studio robustes ajustables avec plateaux isolants. Ils permettent de surélever les enceintes KRK à hauteur d'oreille tout en absorbant les vibrations parasites du bureau.<br><br>
+const speakerData = {
+    title: "KRK Kreate 5 avec Trépieds (La Paire)",
+    desc: `Enceintes de monitoring actives associées à leurs trépieds d'isolation acoustique. Ce système offre une clarté légendaire avec un woofer en Kevlar et élimine les vibrations indésirables pour un mixage audio ultra-précis.<br><br>
           <a href="https://www.sonovente.com/krk-kreate-5-la-paire-supports-bas-p106242.html" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le pack sur SonoVente ↗
+             Voir l'ensemble sur SonoVente ↗
           </a>`
 };
 
-// --- D. TEXTES GÉNÉRIQUES (Recherche intelligente pour le reste) ---
+// --- C. RECHERCHE PAR MOTS-CLÉS (Pour le reste de la pièce) ---
 const studioStudioData = [
     {
         keywords: ["graphictablet", "desk", "screen", "bureau", "jarre"],
@@ -141,14 +129,14 @@ const studioStudioData = [
         desc: "Casque de studio professionnel de référence offrant une clarté exceptionnelle sur une gamme de fréquences étendue, avec des basses profondes et précises.<br><br><a href='https://www.thomann.fr/audio_technica_ath_m50_x.htm' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir sur Thomann ↗</a>"
     },
     {
-        keywords: ["sofa", "couch", "canap", "fauteuil"],
+        keywords: ["sofa", "couch", "canap"],
         title: "Canapé Lounge Studio",
         desc: "Espace détente confortable installé à l'arrière de la régie pour accueillir les artistes et écouter les mixages dans des conditions réelles de salon.<br><br><a href='https://www.thomann.fr' target='_blank' style='color:#00d2ff;font-weight:600;'>Visiter Thomann ↗</a>"
     },
     {
         keywords: ["chair", "chaise", "tabouret", "stool", "wheelchair", "fauteuil"],
-        title: "Fauteuil de Bureau Ergonomique",
-        desc: "Siège réglable haut de gamme monté sur roulettes, conçu pour maintenir une posture idéale devant la console pendant les longues sessions de production.<br><br><a href='https://www.thomann.fr' target='_blank' style='color:#00d2ff;font-weight:600;'>Visiter Thomann ↗</a>"
+        title: "Fauteuil de Direction Ergonomique",
+        desc: "Siège de bureau haut de gamme réglable avec accoudoirs, offrant un soutien parfait de la colonne pour travailler confortablement durant les longues sessions de production.<br><br><a href='https://www.jpg.fr/fauteuils-de-direction_sku70961-00J.html' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir le fauteuil sur JPG ↗</a>"
     },
     {
         keywords: ["cushion", "coussin", "pillow"],
@@ -158,12 +146,9 @@ const studioStudioData = [
 ];
 
 function getObjectData(nameLower) {
-    // 1. Tests des listes d'IDs exacts
     if (drumObjectsList.includes(nameLower)) return drumData;
     if (speakerObjectsList.includes(nameLower)) return speakerData;
-    if (standObjectsList.includes(nameLower)) return standData;
 
-    // 2. Recherche par mot-clé large
     for (const item of studioStudioData) {
         if (item.keywords.some(kw => nameLower.includes(kw))) {
             return item;
@@ -207,7 +192,7 @@ loader.load(
 );
 
 // =========================================================================
-// 6. LE SCANNER DE SCÈNE (PLUGUÉ EN BAS À DROITE)
+// 6. LE SCANNER DE SCÈNE (EN BAS À DROITE)
 // =========================================================================
 
 const selectionBox = new SelectionBox(camera, scene);
