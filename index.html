@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Mon Studio 3D Interactif</title>
+    <title>Art Appliquér - Maquette Studio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
         * {
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
         body, html {
             margin: 0;
@@ -19,7 +20,8 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #0d0d11;
+            background-color: #0a0a0e;
+            color: #f3f4f6;
         }
         #canvas-container {
             width: 100vw;
@@ -30,86 +32,182 @@
             z-index: 1;
         }
         
-        /* Titre principal discret en haut à gauche */
+        /* Vignette d'ambiance en arrière-plan pour donner de la profondeur */
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 40%, rgba(10, 10, 14, 0.6) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+        
+        /* En-tête du site épuré et moderne */
         .site-header {
             position: absolute;
-            top: 25px;
-            left: 25px;
-            color: white;
+            top: 30px;
+            left: 30px;
             z-index: 10;
             pointer-events: none;
+            animation: fadeIn 1s ease-out;
         }
         .site-header h1 {
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 600;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
-            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
         .site-header p {
-            margin: 4px 0 0 0;
+            margin: 6px 0 0 0;
             font-size: 0.8rem;
-            color: #7e7e8c;
-            font-weight: 300;
+            color: #9ca3af;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .site-header p::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
         }
 
-        /* Fenêtre d'informations style "Glassmorphism" futuriste */
+        /* Fenêtre d'informations Style Glassmorphism Premium */
         #info-box {
             position: absolute;
-            top: 25px;
-            right: -350px; /* Caché par défaut à droite */
-            width: 320px;
-            background: rgba(18, 18, 24, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            color: white;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            top: 30px;
+            right: -380px; /* Masqué par défaut */
+            width: 340px;
+            max-height: calc(100vh - 60px);
+            background: rgba(17, 17, 27, 0.65);
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 
+                        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             z-index: 10;
-            transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
         #info-box.active {
-            right: 25px; /* Glisse vers l'intérieur quand activé */
+            right: 30px;
         }
         #info-title {
-            margin: 0 0 12px 0;
-            font-size: 1.3rem;
+            margin: 0 0 16px 0;
+            font-size: 1.25rem;
             font-weight: 600;
-            color: #00d2ff;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 8px;
+            color: #ffffff;
+            line-height: 1.3;
+            letter-spacing: -0.3px;
         }
         #info-description {
-            margin: 0 0 20px 0;
-            font-size: 0.9rem;
-            color: #d1d1d6;
-            line-height: 1.5;
+            margin: 0 0 24px 0;
+            font-size: 0.88rem;
+            color: #d1d5db;
+            line-height: 1.6;
             font-weight: 300;
         }
+        
+        /* Personnalisation des liens intégrés à la description */
+        #info-description a {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+        }
+        #info-description a:hover {
+            background: rgba(0, 210, 255, 0.15) !important;
+        }
+
+        /* Bouton de fermeture moderne */
         #close-btn {
-            background: linear-gradient(135deg, #ff4757, #ff6b81);
-            color: white;
+            background: #ffffff;
+            color: #0a0a0e;
             border: none;
-            padding: 10px 16px;
+            padding: 12px 20px;
             cursor: pointer;
-            border-radius: 8px;
+            border-radius: 10px;
             width: 100%;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: transform 0.2s, opacity 0.2s;
-            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+            font-weight: 500;
+            font-size: 0.88rem;
+            transition: background 0.2s, transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-top: auto; /* Pousse le bouton vers le bas */
         }
         #close-btn:hover {
-            transform: translateY(-2px);
-            opacity: 0.9;
+            background: #e5e7eb;
+            transform: translateY(-1px);
         }
         #close-btn:active {
             transform: translateY(0);
+        }
+
+        /* Petite fonctionnalité utile : Indicateur d'aide en bas (discret) */
+        .interaction-hint {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            background: rgba(17, 17, 27, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 0.75rem;
+            color: #9ca3af;
+            letter-spacing: 0.5px;
+            pointer-events: none;
+            animation: pulse 2.5s infinite ease-in-out;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 0.9; }
+        }
+
+        /* Responsive pour petits écrans */
+        @media (max-width: 480px) {
+            .site-header { top: 20px; left: 20px; }
+            .site-header h1 { font-size: 1.3rem; }
+            #info-box {
+                right: -100%;
+                width: calc(100% - 40px);
+                left: 20px;
+                top: auto;
+                bottom: -100%;
+                max-height: 50vh;
+                transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            #info-box.active {
+                bottom: 20px;
+                right: 20px;
+            }
+            .interaction-hint { display: none; }
         }
     </style>
     <script type="importmap">
@@ -125,15 +223,19 @@
 
     <div class="site-header">
         <h1>Mon Studio 3D</h1>
-        <p>Cliquez sur les éléments pour interagir</p>
+        <p>Mode interactif actif</p>
     </div>
 
     <div id="canvas-container"></div>
 
     <div id="info-box">
         <h2 id="info-title">Nom de l'objet</h2>
-        <p id="info-description">Description...</p>
-        <button id="close-btn">Fermer</button>
+        <div id="info-description">Description...</div>
+        <button id="close-btn">Fermer l'aperçu</button>
+    </div>
+
+    <div class="interaction-hint">
+        Clic gauche pour inspecter • Clic droit + glisser pour pivoter
     </div>
 
     <script type="module" src="main.js"></script>
