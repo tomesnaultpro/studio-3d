@@ -139,7 +139,7 @@ const micObjectsList = [
 
 const micData = {
     title: "Rode NT1-A Complete Vocal Bundle",
-    desc: `Le microphone de studio d'enregistrement de référence par excellence. Ce pack complet comprend le micro à condensateur large membrane NT1-A avec sa suspension araignée, son filtre anti-pop intégré et son écran acoustique d'isolation pour des prises voix impeccables.<br><br>
+    desc: `Microphone de studio d'enregistrement à condensateur large membrane avec sa suspension araignée, son filtre anti-pop intégré et son écran acoustique d'isolation.<br><br>
           <a href="https://www.thomann.fr/rode_nt1_a_compl._micscreen_bundle.htm" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
@@ -163,7 +163,7 @@ const headphoneObjectsList = [
 
 const headphoneData = {
     title: "Apple AirPods Max - Bleu",
-    desc: `Casque supra-auriculaire haut de gamme associant un son haute fidélité à la technologie de réduction active du bruit leader du marché. Idéal pour s'isoler ou effectuer des vérifications d'écoute nettes en studio avec un confort textile d'exception.<br><br>
+    desc: `Casque supra-auriculaire haut de gamme associant un son haute fidélité à la technologie de réduction active du bruit leader du marché. Idéal pour s'isoler ou effectuer des vérifications d'écoute.<br><br>
           <a href="https://www.apple.com/fr/shop/buy-airpods/airpods-max-2/bleu" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
@@ -186,7 +186,7 @@ const phoneObjectsList = [
   "object_20002", "object_202001", "object_204001", "object_206002", "object_2201", 
   "object_24", "object_27", "object_29001", "object_31", "object_33", 
   "object_35001", "object_37", "object_39", "object_41001", "object_44002", 
-  "object_47001", "object_49", "object_51001", "object_53001", "object_55001", 
+  "object_47001", "object_49", "object_51001", "object_53001", "55001", 
   "object_57001", "object_59002", "object_62002", "object_64", "object_67", 
   "object_69001", "object_71002", "object_73001", "object_76", "object_78001", 
   "object_81", "object_83002", "object_85001", "object_87", "object_90", 
@@ -195,7 +195,7 @@ const phoneObjectsList = [
 
 const phoneData = {
     title: "Apple iPhone 15 Pro (256 Go) - Noir",
-    desc: `Smartphone de contrôle ultra-puissant doté d'un châssis en titane et de la puce A17 Pro. Il sert d'outil multimédia parfait pour piloter la diffusion, enregistrer des sessions ou gérer la DAW à distance via le réseau du studio.<br><br>
+    desc: `Smartphone de contrôle ultra-puissant doté d'un châssis en titane. Il sert d'outil multimédia parfait pour piloter la diffusion, enregistrer des sessions ou gérer la DAW à distance.<br><br>
           <a href="https://www.darty.com/nav/achat/telephonie/telephone_mobile_seul/iphone/apple_iph15pro_256go_noir.html" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
@@ -203,14 +203,14 @@ const phoneData = {
           </a>`
 };
 
-// --- G. CLAVIER MIDI ARTURIA KEYLAB 61 MK3 (Nouvel ajout) ---
+// --- G. CLAVIER MIDI ARTURIA KEYLAB 61 MK3 ---
 const midiPianoObjectsList = [
   "object_68", "object_69", "object_71", "object_72", "object_73", "object_74"
 ];
 
 const midiPianoData = {
     title: "Arturia KeyLab 61 Mk3 - White",
-    desc: `Clavier maître USB/MIDI haut de gamme à 61 touches. Idéal pour le studio, il offre un toucher semi-lesté d'une précision incroyable, de nombreux pads, curseurs et encodeurs, ainsi qu'une intégration logicielle parfaite avec toutes les DAW majeurs.<br><br>
+    desc: `Clavier maître USB/MIDI haut de gamme à 61 touches semi-lestées. Offre de nombreux pads, curseurs et encodeurs avec une intégration logicielle parfaite pour composer efficacement.<br><br>
           <a href="https://www.bax-shop.fr/clavier-midi/arturia-keylab-61-mk3-white-clavier-usb-midi" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
@@ -218,14 +218,14 @@ const midiPianoData = {
           </a>`
 };
 
-// --- H. SURFACE DE CONTRÔLE AKAI MIDIMIX (Nouvel ajout) ---
+// --- H. SURFACE DE CONTRÔLE AKAI MIDIMIX ---
 const akaiMixObjectsList = [
   "object_100", "object_98", "object_99"
 ];
 
 const akaiMixData = {
     title: "Akai Professional MIDImix",
-    desc: `Surface de contrôle ultra-compacte et performante permettant de mixer ses projets musicaux en studio avec une ergonomie tactile. Elle offre la disposition classique d'une table de mixage avec 8 faders individuels, 24 potentiomètres rotatifs et un fader master.<br><br>
+    desc: `Surface de contrôle ultra-compacte permettant de mixer ses projets musicaux en studio avec une ergonomie tactile. Elle offre 8 faders individuels et 24 potentiomètres rotatifs.<br><br>
           <a href="https://www.stars-music.fr/akai-midimix-surface-controle_87378.html" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
@@ -233,7 +233,7 @@ const akaiMixData = {
           </a>`
 };
 
-// --- I. ÉCRAN DELL + BRAS ARTICULÉ ERGONOMIQUE MANUTAN (Nouvel ajout fusionné) ---
+// --- I. ÉCRAN DELL + BRAS ARTICULÉ ERGONOMIQUE MANUTAN ---
 const screenObjectsList = [
   "object_206", "object_214", "object_217", "object_218", "object_220", "object_222", 
   "object_188", "object_196", "object_199", "object_200", "object_202", "object_204"
@@ -241,12 +241,55 @@ const screenObjectsList = [
 
 const screenData = {
     title: "Moniteur Dell 27\" & Bras Ergonomique Manutan",
-    desc: `Ensemble d'affichage de régie comprenant l'écran Dell 27" fluide et réactif, suspendu sur son bras porte-écran articulé noir Manutan Expert. Ce système libère l'espace de travail sur le meuble de studio tout en garantissant un angle de vision optimal.<br><br>
+    desc: `Ensemble d'affichage de régie comprenant l'écran Dell 27" fluide suspendu sur son bras porte-écran articulé noir Manutan Expert pour optimiser l'espace de travail sur le bureau.<br><br>
           <a href="https://www.dell.com/fr-fr/shop/%C3%A9cran-dell-27-200-hz-se2725hg/apd/210-bsns/%C3%A9crans-et-accessoires-pour-%C3%A9crans" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'Écran sur Dell ↗</a><br>
           <a href="https://www.manutan.fr/fr/maf/bras-porte-ecran-articule-ergonomique-simple-noir-manutan-expert-ac28285" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Bras sur Manutan ↗</a>`
 };
 
-// --- J. RECHERCHE AUTOMATIQUE / MOTS-CLÉS ---
+// --- J. SONY ALPHA 7 III & BRAS SMALLRIG (Nouvel ajout fusionné) ---
+const cameraObjectsList = [
+  "object_50", "object_51", "object_52", "object_54", "object_55", 
+  "object_57", "object_58", "object_59", "object_42", "object_43", "object_44"
+];
+
+const cameraData = {
+    title: "Sony Alpha 7 III & Bras Magique SmallRig",
+    desc: `Caméra hybride plein format hautes performances associée à un objectif 28-70mm, suspendue solidement par un bras magique articulé articulé SmallRig (11"). Parfait pour capturer des vidéos de qualité professionnelle en régie ou filmer des sessions de podcast.<br><br>
+          <a href="https://www.digit-photo.com/SONY-Alpha-7-III-28-70mm-f-3-5-5-6-SEL-rSONYILCE7M3KBCEC.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir la Caméra sur Digit-Photo ↗</a><br>
+          <a href="https://www.digit-photo.com/SMALLRIG-5309-Support-Bras-Magique-11-rSMALLRIG5309.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Bras SmallRig sur Digit-Photo ↗</a>`
+};
+
+// --- K. ELGATO STREAM DECK MK2 (Nouvel ajout) ---
+const streamDeckObjectsList = [
+  "object_224", "object_225", "object_226"
+];
+
+const streamDeckData = {
+    title: "Elgato Stream Deck MK2",
+    desc: `Interface de contrôle d'automatisation de studio comprenant 15 touches LCD entièrement personnalisables. Elle permet de lancer des macros, contrôler l'audio, basculer des scènes vidéo et piloter des applications de production en une pression.<br><br>
+          <a href="https://www.thomann.fr/elgato_stream_deck_mk2.htm" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir sur Thomann ↗
+          </a>`
+};
+
+// --- L. MICRO DE STUDIO PODCAST SHURE SM7B (Nouvel ajout) ---
+const shureMicObjectsList = [
+  "object_114", "object_117", "object_118", "object_120", "object_122", "object_124"
+];
+
+const shureMicData = {
+    title: "Shure SM7B Podcast Bundle",
+    desc: `Le microphone dynamique d'antenne et de studio le plus réputé au monde pour la voix. Livré en pack complet avec son bras articulé de table haut de gamme pour une flexibilité maximale et un rendu audio chaud, soyeux et parfaitement isolé des bruits ambiants.<br><br>
+          <a href="https://www.thomann.fr/shure_sm_7_b_podcast_bundle.htm" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir le pack Shure sur Thomann ↗
+          </a>`
+};
+
+// --- M. RECHERCHE AUTOMATIQUE / MOTS-CLÉS (Éléments restants) ---
 const studioStudioData = [
     {
         keywords: ["graphictablet", "desk", "screen", "bureau", "jarre"],
@@ -276,6 +319,9 @@ function getObjectData(nameLower) {
     if (midiPianoObjectsList.includes(nameLower)) return midiPianoData;
     if (akaiMixObjectsList.includes(nameLower)) return akaiMixData;
     if (screenObjectsList.includes(nameLower)) return screenData;
+    if (cameraObjectsList.includes(nameLower)) return cameraData;
+    if (streamDeckObjectsList.includes(nameLower)) return streamDeckData;
+    if (shureMicObjectsList.includes(nameLower)) return shureMicData;
 
     for (const item of studioStudioData) {
         if (item.keywords.some(kw => nameLower.includes(kw))) {
