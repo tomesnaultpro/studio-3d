@@ -38,7 +38,7 @@ const mouse = new THREE.Vector2();
 let selectableObjects = [];
 
 // =========================================================================
-// 4. BASE DE DONNÉES COMPLÈTE ET CORRIGÉE DU STUDIO
+// 4. BASE DE DONNÉES COMPLÈTE ET VALIDÉE DU STUDIO
 // =========================================================================
 
 // --- A. LA BATTERIE ---
@@ -93,12 +93,10 @@ const drumData = {
           </a>`
 };
 
-// --- B. ENCEINTES KRK + TRÉPIEDS FUSIONNÉS (Tes listes exactes) ---
+// --- B. ENCEINTES KRK + TRÉPIEDS FUSIONNÉS ---
 const speakerObjectsList = [
-  // Les enceintes
   "object_126", "object_135", "object_136", "object_137", "object_138", 
   "object_140", "object_149", "object_150", "object_151", "object_152",
-  // Les pieds / trépieds
   "object_135003", "object_136005", "object_137006", "object_138004", 
   "studiomonitorstand_studiomonitorstand_metal_0", "studiomonitorstand_studiomonitorstand_plastic_0", 
   "object_135004", "object_136007", "object_137007", "object_138005", 
@@ -116,7 +114,25 @@ const speakerData = {
           </a>`
 };
 
-// --- C. RECHERCHE PAR MOTS-CLÉS (Pour le reste de la pièce) ---
+// --- C. CANAPÉ DESIGN BONO (Ta liste exacte validée) ---
+const sofaObjectsList = [
+  "box009_gray_fabric_0", "cylinder001_metall_0", "line001_metall_0", 
+  "line002_metall_0", "line009_metall_0", "line010_metall_0",
+  "f-1910-5680_conforama_canap??-lit_sienna_black_plastic_plas",
+  "f-1910-5680_conforama_canap-lit_sienna_black_plastic_plas"
+];
+
+const sofaData = {
+    title: "Canapé Design 3 Places BONO",
+    desc: `Canapé élégant en tissu effet velours texturé gris. Sa structure moderne et assise confortable offrent un espace lounge idéal à l'arrière du studio pour accueillir les artistes pendant les phases d'écoute.<br><br>
+          <a href="https://www.miliboo.com/canape-design-3-places-tissu-effet-velours-texture-gris-bono-57597.html" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir le canapé sur Miliboo ↗
+          </a>`
+};
+
+// --- D. RECHERCHE PAR MOTS-CLÉS (Pour les éléments restants) ---
 const studioStudioData = [
     {
         keywords: ["graphictablet", "desk", "screen", "bureau", "jarre"],
@@ -129,25 +145,22 @@ const studioStudioData = [
         desc: "Casque de studio professionnel de référence offrant une clarté exceptionnelle sur une gamme de fréquences étendue, avec des basses profondes et précises.<br><br><a href='https://www.thomann.fr/audio_technica_ath_m50_x.htm' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir sur Thomann ↗</a>"
     },
     {
-        keywords: ["sofa", "couch", "canap"],
-        title: "Canapé Lounge Studio",
-        desc: "Espace détente confortable installé à l'arrière de la régie pour accueillir les artistes et écouter les mixages dans des conditions réelles de salon.<br><br><a href='https://www.thomann.fr' target='_blank' style='color:#00d2ff;font-weight:600;'>Visiter Thomann ↗</a>"
-    },
-    {
         keywords: ["chair", "chaise", "tabouret", "stool", "wheelchair", "fauteuil"],
         title: "Fauteuil de Direction Ergonomique",
         desc: "Siège de bureau haut de gamme réglable avec accoudoirs, offrant un soutien parfait de la colonne pour travailler confortablement durant les longues sessions de production.<br><br><a href='https://www.jpg.fr/fauteuils-de-direction_sku70961-00J.html' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir le fauteuil sur JPG ↗</a>"
     },
     {
         keywords: ["cushion", "coussin", "pillow"],
-        title: "Coussins Confort",
-        desc: "Éléments décoratifs et de confort pour optimiser l'accueil dans l'espace lounge du studio."
+        title: "Coussin Décoratif Pokar",
+        desc: `Coussin de confort coloré (40x40 Orange), parfait pour apporter une touche de design et optimiser l'assise dans l'espace détente du studio.<br><br>
+              <a href="https://pokar.fr/fr/product/1123-coussin-decoratif-pour-palettes-40x40-orange" target="_blank" style="color:#00d2ff;font-weight:600;">Voir sur Pokar ↗</a>`
     }
 ];
 
 function getObjectData(nameLower) {
     if (drumObjectsList.includes(nameLower)) return drumData;
     if (speakerObjectsList.includes(nameLower)) return speakerData;
+    if (sofaObjectsList.includes(nameLower)) return sofaData;
 
     for (const item of studioStudioData) {
         if (item.keywords.some(kw => nameLower.includes(kw))) {
