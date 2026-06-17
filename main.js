@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+// Outils officiels Three.js pour la sélection de zone
+import { SelectionBox } from 'three/addons/interactive/SelectionBox.js';
+import { SelectionHelper } from 'three/addons/interactive/SelectionHelper.js';
 
 // 1. Configuration de la Scène
 const scene = new THREE.Scene();
@@ -14,54 +17,24 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 document.getElementById('canvas-container').appendChild(renderer.domElement);
 
+// Style CSS pour le rectangle de sélection Windows (à ajouter si nécessaire, ou géré automatiquement)
+const style = document.createElement('style');
+style.innerHTML = `.selectBox { border: 2px dashed #00d2ff; background-color: rgba(0, 210, 255, 0.2); position: absolute; pointer-events: none; }`;
+document.head.appendChild(style);
+
 // 2. Configuration des contrôles
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.1; 
-controls.zoomSpeed = 1.8;     
-controls.rotateSpeed = 1.5;   
 
 // 3. Lumières
 const ambientLight = new THREE.AmbientLight(0xffffff, 3.5); 
 scene.add(ambientLight);
-
 const dirLight = new THREE.DirectionalLight(0xffffff, 4.0); 
 dirLight.position.set(30, 50, 30);
 scene.add(dirLight);
 
-const cameraLight = new THREE.PointLight(0xffffff, 8.0, 100);
-camera.add(cameraLight);
-scene.add(camera);
-
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-
-let selectableObjects = [];
-
-// =========================================================================
-// 4. LISTE COMPLÈTE ET EXACTE DES OBJETS DE TA BATTERIE (DEPUIS LE GLTF)
-// =========================================================================
-
-const drumExactObjects = [
-    // Structures et Fûts principaux
-    "circle", "branco", "prato", "peli", "objeto", "pedal", "suporte",
-    // Maillages de rendu physiques (Object_1700 à Object_2000 trouvés dans ton fichier)
-    "object_17", "object_18", "object_19", "object_20"
-];
-
-const drumData = {
-    title: "Pearl Roadshow 22\" Plus Jet Black",
-    desc: `Batterie acoustique complète de la série Roadshow, idéale pour les batteurs exigeants. Elle comprend des fûts robustes en peuplier, un accastillage complet et des cymbales pour un punch et une résonance remarquables au studio.<br><br>
-          <a href="https://www.thomann.fr/pearl_roadshow_22_plus_jet_black.htm?gad_source=1&gad_campaignid=1544038001&gclid=Cj0KCQjwornRBhCrARIsAON5exHpOQMgj_0FgzB6rgKyX7STbq3g1etN4JAWFiNKskSyCU7syJFgaa4aAjIhEALw_wcB" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le produit sur Thomann ↗
-          </a>`
-};
-
-// =========================================================================
-
-// 5. Chargement du modèle 3D
+// 4. Chargement du modèle 3D
 const loader = new GLTFLoader();
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
@@ -77,87 +50,104 @@ loader.load(
         const box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
-
         model.position.x += (model.position.x - center.x);
         model.position.y += (model.position.y - center.y);
         model.position.z += (model.position.z - center.z);
 
         const maxDim = Math.max(size.x, size.y, size.z);
-        const fov = camera.fov * (Math.PI / 180);
-        let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2)) * 1.5;
-        
-        camera.position.set(maxDim * 0.3, maxDim * 0.6, cameraZ);
+        camera.position.set(maxDim * 0.5, maxDim * 0.5, maxDim * 1.5);
         controls.target.set(0, 0, 0);
-
-        // On enregistre TOUS les sous-éléments du modèle 3D
-        model.traverse((child) => {
-            if (child.isMesh) {
-                selectableObjects.push(child);
-            }
-        });
-        console.log("Tous les objets du GLTF sont indexés.");
-    },
-    undefined,
-    (error) => {
-        console.error("Erreur de chargement du modèle :", error);
+        console.log("Studio chargé. Mode sélection multiple prêt !");
     }
 );
 
-// 6. Détection des interactions (Clic / Tactile)
-function handleInteraction(clientX, clientY) {
-    mouse.x = (clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(clientY / window.innerHeight) * 2 + 1;
+// =========================================================================
+// 5. SYSTÈME DE SÉLECTION MULTIPLE (STYLE WINDOWS)
+// =========================================================================
 
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(selectableObjects);
+const selectionBox = new SelectionBox(camera, scene);
+const helper = new SelectionHelper(renderer, 'selectBox');
 
-    if (intersects.length > 0) {
-        let hitObject = intersects[0].object;
-        let current = hitObject;
-        let finalData = null;
+// Crée un panneau temporaire dans ton interface pour afficher la liste des noms copiables
+const namesPanel = document.createElement('div');
+namesPanel.style.position = 'absolute';
+namesPanel.style.top = '20px';
+namesPanel.style.right = '20px';
+namesPanel.style.width = '320px';
+namesPanel.style.maxHeight = '80vh';
+namesPanel.style.overflowY = 'auto';
+namesPanel.style.backgroundColor = 'rgba(20, 20, 25, 0.95)';
+namesPanel.style.color = '#fff';
+namesPanel.style.padding = '15px';
+namesPanel.style.fontFamily = 'monospace';
+namesPanel.style.fontSize = '12px';
+namesPanel.style.borderRadius = '8px';
+namesPanel.style.border = '1px solid #333';
+namesPanel.style.zIndex = '9999';
+namesPanel.innerHTML = `<h3>Objets Sélectionnés</h3><p style="color:#888;">Maintiens la touche <b>Maj (Shift)</b> enfoncée et glisse la souris pour encadrer la batterie.</p><textarea id="names-output" style="width:100%; height:200px; background:#000; color:#00ffcc; border:1px solid #444; padding:5px; font-family:monospace;" readonly></textarea><br><button id="copy-btn" style="margin-top:5px; width:100%; padding:5px; background:#00d2ff; color:#000; border:none; font-weight:bold; cursor:pointer;">Copier la liste</button>`;
+document.body.appendChild(namesPanel);
 
-        // REMONTÉE ET VÉRIFICATION DE TOUTE LA HIÉRARCHIE DE L'OBJET CLIQUÉ
-        while (current && current !== scene) {
-            let nameLower = current.name.toLowerCase().trim();
-            
-            // Si le nom du maillage ou de l'un de ses parents contient un mot de la liste exacte
-            if (drumExactObjects.some(keyword => nameLower.includes(keyword))) {
-                finalData = drumData;
-                break;
+window.addEventListener('pointerdown', function (event) {
+    // On active la sélection uniquement si la touche Maj (Shift) est enfoncée pour ne pas gêner la rotation de caméra
+    if (event.shiftKey) {
+        controls.enabled = false; // Désactive la caméra pendant qu'on sélectionne
+        selectionBox.startPoint.set(
+            (event.clientX / window.innerWidth) * 2 - 1,
+            -(event.clientY / window.innerHeight) * 2 + 1,
+            0.5
+        );
+    }
+});
+
+window.addEventListener('pointermove', function (event) {
+    if (helper.isDown) {
+        selectionBox.endPoint.set(
+            (event.clientX / window.innerWidth) * 2 - 1,
+            -(event.clientY / window.innerHeight) * 2 + 1,
+            0.5
+        );
+    }
+});
+
+window.addEventListener('pointerup', function (event) {
+    controls.enabled = true; // Réactive la caméra au relâchement
+    
+    if (event.shiftKey) {
+        selectionBox.endPoint.set(
+            (event.clientX / window.innerWidth) * 2 - 1,
+            -(event.clientY / window.innerHeight) * 2 + 1,
+            0.5
+        );
+
+        // Récupère tous les objets capturés dans la boîte
+        const allSelected = selectionBox.select();
+        const uniqueNames = new Set();
+
+        allSelected.forEach(obj => {
+            if (obj.isMesh && obj.name) {
+                uniqueNames.add(obj.name.trim());
+                // On récupère aussi le nom du parent direct s'il existe
+                if (obj.parent && obj.parent.name && obj.parent !== scene) {
+                    uniqueNames.add(obj.parent.name.trim());
+                }
             }
-            current = current.parent;
-        }
+        });
 
-        // Affichage du panel
-        if (finalData) {
-            document.getElementById('info-title').innerText = finalData.title;
-            document.getElementById('info-description').innerHTML = finalData.desc;
-            document.getElementById('info-box').classList.add('active');
-        } else {
-            document.getElementById('info-box').classList.remove('active');
-        }
-    } else {
-        document.getElementById('info-box').classList.remove('active');
-    }
-}
-
-window.addEventListener('click', (event) => {
-    if (event.target.closest('#info-box') || event.target.closest('.site-header')) return; 
-    handleInteraction(event.clientX, event.clientY);
-});
-
-window.addEventListener('touchend', (event) => {
-    if (event.target.closest('#info-box') || event.target.closest('.site-header')) return;
-    if (event.changedTouches.length > 0) {
-        handleInteraction(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+        // Convertit la liste en texte trié pour l'affichage
+        const namesArray = Array.from(uniqueNames).sort();
+        document.getElementById('names-output').value = JSON.stringify(namesArray, null, 2);
     }
 });
 
-document.getElementById('close-btn').addEventListener('click', () => {
-    document.getElementById('info-box').classList.remove('active');
+// Bouton de copie rapide
+document.getElementById('copy-btn').addEventListener('click', () => {
+    const textarea = document.getElementById('names-output');
+    textarea.select();
+    document.execCommand('copy');
+    alert('Liste copiée ! Colle-la directement dans notre discussion.');
 });
 
-// 7. Boucle d'animation
+// 6. Boucle d'animation
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
