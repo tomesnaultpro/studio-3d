@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { SelectionBox } from 'three/addons/interactive/SelectionBox.js';
+import { SelectionHelper } from 'three/addons/interactive/SelectionHelper.js';
 
 // 1. Configuration de la Scène
 const scene = new THREE.Scene();
@@ -14,35 +16,32 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 document.getElementById('canvas-container').appendChild(renderer.domElement);
 
+// Style CSS pour le rectangle de sélection Windows
+const style = document.createElement('style');
+style.innerHTML = `.selectBox { border: 2px dashed #00d2ff; background-color: rgba(0, 210, 255, 0.2); position: absolute; pointer-events: none; }`;
+document.head.appendChild(style);
+
 // 2. Configuration des contrôles
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.1; 
-controls.zoomSpeed = 1.8;     
-controls.rotateSpeed = 1.5;   
 
 // 3. Lumières
 const ambientLight = new THREE.AmbientLight(0xffffff, 3.5); 
 scene.add(ambientLight);
-
 const dirLight = new THREE.DirectionalLight(0xffffff, 4.0); 
 dirLight.position.set(30, 50, 30);
 scene.add(dirLight);
 
-const cameraLight = new THREE.PointLight(0xffffff, 8.0, 100);
-camera.add(cameraLight);
-scene.add(camera);
-
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
-
 let selectableObjects = [];
 
 // =========================================================================
-// 4. BASE DE DONNÉES DU STUDIO (MEUBLE PAR MEUBLE - BASE PROPRE)
+// 4. BASE DE DONNÉES COMPLÈTE DU STUDIO (AVEC TES ANCIENS MEUBLES)
 // =========================================================================
 
-// --- A. LA BATTERIE (Liste complète et exacte récupérée par ta sélection) ---
+// --- A. LA BATTERIE (Ta liste exacte validée) ---
 const drumObjectsList = [
   "object_1007", "object_1013", "object_1016", "object_1022", "object_1049", 
   "object_1052", "object_1055", "object_1058", "object_1064", "object_11", 
@@ -84,6 +83,40 @@ const drumObjectsList = [
   "object_950"
 ];
 
+// Mots-clés des autres modules pour une détection intelligente par nom
+const studioStudioData = [
+    {
+        keywords: ["graphictablet", "desk", "screen", "bureau", "jarre"],
+        title: "La Jarre à Son - Home Studio Desk 2023",
+        desc: "Le meuble central du studio de production musicale, doté d'une ergonomie poussée avec sa tablette graphique intégrée et ses supports d'enceintes surélevés.<br><br><a href='https://sketchfab.com/3d-models/la-jarre-a-son-home-studio-desk-2023-538fdc1dc1c1478da6a2761ec3c6dcab' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir sur Sketchfab ↗</a>"
+    },
+    {
+        keywords: ["speaker", "enceinte", "monitor", "krk", "yamaha"],
+        title: "Moniteurs de Studio Pro",
+        desc: "Enceintes de monitoring actives haute fidélité assurant une réponse en fréquence neutre et ultra-précise pour le mixage et le mastering.<br><br><a href='https://www.thomann.fr' target='_blank' style='color:#00d2ff;font-weight:600;'>Découvrir sur Thomann ↗</a>"
+    },
+    {
+        keywords: ["headphone", "casque", "audiotechnica", "beyer"],
+        title: "Casque de Monitoring Professionnel",
+        desc: "Casque de studio de référence offrant une isolation acoustique maximale et un confort optimal pour les longues sessions d'enregistrement.<br><br><a href='https://www.thomann.fr' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir sur Thomann ↗</a>"
+    },
+    {
+        keywords: ["sofa", "couch", "canap", "fauteuil"],
+        title: "Canapé Lounge Studio",
+        desc: "Espace détente confortable installé à l'arrière de la régie pour accueillir les artistes et écouter les mixages dans des conditions réelles de salon."
+    },
+    {
+        keywords: ["chair", "chaise", "tabouret", "stool"],
+        title: "Chaise Ergonomique de Production",
+        desc: "Siège réglable de haute qualité conçu pour maintenir une posture saine devant la station de travail audio numérique (STAN)."
+    },
+    {
+        keywords: ["cushion", "coussin", "pillow"],
+        title: "Coussins Confort",
+        desc: "Éléments décoratifs et de confort pour optimiser l'accueil dans l'espace lounge du studio."
+    }
+];
+
 const drumData = {
     title: "Pearl Roadshow 22\" Plus Jet Black",
     desc: `Batterie acoustique complète de la série Roadshow, idéale pour les batteurs exigeants. Elle comprend des fûts robustes en peuplier, un accastillage complet et des cymbales pour un punch et une résonance remarquables au studio.<br><br>
@@ -93,6 +126,19 @@ const drumData = {
              Voir le produit sur Thomann ↗
           </a>`
 };
+
+// Fonction globale pour trouver à quel groupe un maillage appartient
+function getObjectData(nameLower) {
+    if (drumObjectsList.includes(nameLower)) {
+        return drumData;
+    }
+    for (const item of studioStudioData) {
+        if (item.keywords.some(kw => nameLower.includes(kw))) {
+            return item;
+        }
+    }
+    return null;
+}
 
 // =========================================================================
 
@@ -108,38 +154,52 @@ loader.load(
         const model = gltf.scene;
         scene.add(model);
 
-        // Centrage automatique
         const box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
-
         model.position.x += (model.position.x - center.x);
         model.position.y += (model.position.y - center.y);
         model.position.z += (model.position.z - center.z);
 
         const maxDim = Math.max(size.x, size.y, size.z);
-        const fov = camera.fov * (Math.PI / 180);
-        let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2)) * 1.5;
-        
-        camera.position.set(maxDim * 0.3, maxDim * 0.6, cameraZ);
+        camera.position.set(maxDim * 0.4, maxDim * 0.5, maxDim * 1.3);
         controls.target.set(0, 0, 0);
 
-        // On référence tous les meshes de la scène
         model.traverse((child) => {
             if (child.isMesh) {
                 selectableObjects.push(child);
             }
         });
-        console.log("Système finalisé. Batterie 100 % cliquable et fonctionnelle !");
-    },
-    undefined,
-    (error) => {
-        console.error("Erreur de chargement du modèle :", error);
+        console.log("Scanner de Studio prêt.");
     }
 );
 
-// 6. Détection des interactions (Clic / Tactile)
-function handleInteraction(clientX, clientY) {
+// =========================================================================
+// 6. LE SCANNER DE SCÈNE (INTERFACE WINDOWS + CLIC UNIQUE)
+// =========================================================================
+
+const selectionBox = new SelectionBox(camera, scene);
+const helper = new SelectionHelper(renderer, 'selectBox');
+
+const namesPanel = document.createElement('div');
+namesPanel.style.position = 'absolute';
+namesPanel.style.top = '20px';
+namesPanel.style.right = '20px';
+namesPanel.style.width = '320px';
+namesPanel.style.maxHeight = '45vh';
+namesPanel.style.overflowY = 'auto';
+namesPanel.style.backgroundColor = 'rgba(20, 20, 25, 0.95)';
+namesPanel.style.color = '#fff';
+namesPanel.style.padding = '15px';
+namesPanel.style.fontFamily = 'monospace';
+namesPanel.style.fontSize = '12px';
+namesPanel.style.borderRadius = '8px';
+namesPanel.style.border = '1px solid #333';
+namesPanel.style.zIndex = '9999';
+namesPanel.innerHTML = `<h3>Outil d'extraction</h3><p style="color:#888; margin:5px 0;">Maintiens <b>Maj (Shift)</b> + glisse la souris pour copier de nouveaux meubles.</p><textarea id="names-output" style="width:100%; height:120px; background:#000; color:#00ffcc; border:1px solid #444; padding:5px; font-family:monospace;" readonly></textarea><button id="copy-btn" style="margin-top:5px; width:100%; padding:5px; background:#00d2ff; color:#000; border:none; font-weight:bold; cursor:pointer;">Copier la liste</button>`;
+document.body.appendChild(namesPanel);
+
+function handleSingleClick(clientX, clientY) {
     mouse.x = (clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(clientY / window.innerHeight) * 2 + 1;
 
@@ -147,22 +207,16 @@ function handleInteraction(clientX, clientY) {
     const intersects = raycaster.intersectObjects(selectableObjects);
 
     if (intersects.length > 0) {
-        let hitObject = intersects[0].object;
-        let current = hitObject;
+        let current = intersects[0].object;
         let finalData = null;
 
-        // On remonte l'arborescence pour chercher une correspondance exacte
         while (current && current !== scene) {
             let nameLower = current.name.toLowerCase().trim();
-            
-            if (drumObjectsList.includes(nameLower)) {
-                finalData = drumData;
-                break;
-            }
+            finalData = getObjectData(nameLower);
+            if (finalData) break;
             current = current.parent;
         }
 
-        // Affichage dynamique dans le panneau HTML
         if (finalData) {
             document.getElementById('info-title').innerText = finalData.title;
             document.getElementById('info-description').innerHTML = finalData.desc;
@@ -175,23 +229,54 @@ function handleInteraction(clientX, clientY) {
     }
 }
 
-window.addEventListener('click', (event) => {
-    if (event.target.closest('#info-box') || event.target.closest('.site-header')) return; 
-    handleInteraction(event.clientX, event.clientY);
+window.addEventListener('pointerdown', function (event) {
+    if (event.target.closest('#names-panel') || event.target.closest('#info-box')) return;
+    if (event.shiftKey) {
+        controls.enabled = false;
+        selectionBox.startPoint.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
+    }
 });
 
-window.addEventListener('touchend', (event) => {
-    if (event.target.closest('#info-box') || event.target.closest('.site-header')) return;
-    if (event.changedTouches.length > 0) {
-        handleInteraction(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+window.addEventListener('pointermove', function (event) {
+    if (helper.isDown) {
+        selectionBox.endPoint.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
     }
+});
+
+window.addEventListener('pointerup', function (event) {
+    controls.enabled = true;
+    if (event.shiftKey) {
+        selectionBox.endPoint.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
+        const allSelected = selectionBox.select();
+        const uniqueNames = new Set();
+
+        allSelected.forEach(obj => {
+            if (obj.isMesh && obj.name) {
+                uniqueNames.add(obj.name.trim());
+                if (obj.parent && obj.parent.name && obj.parent !== scene) uniqueNames.add(obj.parent.name.trim());
+            }
+        });
+
+        document.getElementById('names-output').value = JSON.stringify(Array.from(uniqueNames).sort(), null, 2);
+    }
+});
+
+window.addEventListener('click', (event) => {
+    if (event.shiftKey || event.target.closest('#info-box') || event.target.closest('.site-header') || event.target.closest('button')) return; 
+    handleSingleClick(event.clientX, event.clientY);
+});
+
+document.getElementById('copy-btn').addEventListener('click', () => {
+    const textarea = document.getElementById('names-output');
+    textarea.select();
+    document.execCommand('copy');
+    alert('Liste copiée !');
 });
 
 document.getElementById('close-btn').addEventListener('click', () => {
     document.getElementById('info-box').classList.remove('active');
 });
 
-// 7. Boucle d'animation
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
