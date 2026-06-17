@@ -147,18 +147,18 @@ const micData = {
           </a>`
 };
 
-// --- E. CASQUE AUDIO APPLE AIRPODS MAX ---
+// --- E. CASQUE AUDIO APPLE AIRPODS MAX (Mis à jour et enrichi) ---
 const headphoneObjectsList = [
-  "aanwpkmfljrfwqj", "aexpvrshrbaaroo", "bnozvcfckcmanz", "djdgbrevlkseknl", 
+  "aanwpkmfljrfwqj", "aexpvrshrbaarooz", "bnozvcafckcmanz", "djdgbrevlkseknl", 
   "fzpyptjpuzbycjw", "huobrxkxkekuwxx", "huxnidmrqhpdtej", "ihefvqmczhpaduy", 
-  "jdajisnyuduqgzb", "juhozdroclbfkqg", "lswgfsweioaicgt", "object_162", 
-  "object_164", "object_169", "object_170", "object_172", "object_173", 
-  "pndaaljhshkuws", "qvkyuxluhiwizge", "tovohyqezchyzgl", "wdmisgpfbmqrdoh", 
-  "wwrkmzfxzwaccgu", "wwtyjswgshsanes", "xiphiahsthjzhhw", "ygrsyuxvgxlggro", 
-  "ymagkzdkmtwuqje", "zczolifjlvletmq", "zhebfjyaxlhlsle", "zdaqqruptsemflo", 
-  "alkkbnxysoolingi", "ecebpffksspuio", "gwzdgrmvilveqvj", "hexwygwownpqirf", 
+  "jdajisnyuduqgzb", "juhozdrocibfkqg", "lswgfsweioaicgt", "object_162", 
+  "object_164", "object_169", "object_170", "pndaaljhbshkuws", "qvkyuxluhiwizge", 
+  "tovohyqezchyzgl", "wdmisgpfbmqrdoh", "wwrkmzfxzwaccgu", "wwtyjswgshsanes", 
+  "xiphiahsthjzhhw", "ygrsyuxvgxlggro", "ymagkzdkmtwuqje", "zczolifjlvletmq", 
+  "zczolifjlvltcmq", "zhebfjyaxlhlsle", "zdaqqruptsemflo", "alkkbnxysoolingi", 
+  "ecebppfgksspuio", "ecebpffksspuio", "gwzdgrmvilveqvj", "hexwygwownpqirf", 
   "lfgkqhirxtridbu", "ltnuleuwbsqyabk", "sytnpmcquioflqg", "syukhlwqwhfyqza", 
-  "uofrdwfacejqwov", "vuggowiguweeaqg"
+  "uofrdwwacejqwov", "uofrdwfacejqwov", "vuggowiguweeaqg"
 ];
 
 const headphoneData = {
@@ -289,7 +289,7 @@ const shureMicData = {
           </a>`
 };
 
-// --- M. ENSEMBLE CLAVIER & SOURIS CHERRY STREAM DESKTOP (Nouvel ajout) ---
+// --- M. ENSEMBLE CLAVIER & SOURIS CHERRY STREAM DESKTOP ---
 const cherryKeyboardObjectsList = [
   "object_154", "object_156", "object_157", "object_159", "object_160"
 ];
@@ -304,7 +304,7 @@ const cherryKeyboardData = {
           </a>`
 };
 
-// --- N. SUPPORT D'ORDINATEUR ERGONOMIQUE NETWALKER (Nouvel ajout) ---
+// --- N. SUPPORT D'ORDINATEUR ERGONOMIQUE NETWALKER ---
 const netwalkerStandObjectsList = [
   "object_5"
 ];
@@ -319,7 +319,32 @@ const netwalkerStandData = {
           </a>`
 };
 
-// --- O. RECHERCHE AUTOMATIQUE / MOTS-CLÉS (Éléments restants) ---
+// --- O. TABLETTE GALAXY TAB A9 & PORTABLE GLIDETAB (Nouvel ajout) ---
+const galaxyTabObjectsList = [
+  "object_228", "object_230", "object_231", "object_232"
+];
+
+const galaxyTabData = {
+    title: "Samsung Galaxy Tab A9 11\" & Support Glidetab",
+    desc: `Tablette tactile compacte Android (WiFi, 4 Go RAM, 64 Go) configurée en écran secondaire de retour ou en contrôleur d'application tiers, sécurisée sur son support de fixation ergonomique et pivotant Maclocks Glidetab.<br><br>
+          <a href="https://www.manutan-collectivites.fr/product/tablette-11-galaxy-tab-a9-wifi-4go-64go-anthracite-itg49431097.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir la Tablette sur Manutan ↗</a><br>
+          <a href="https://www.maclocks.eu/fr/glidetab.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Support Glidetab sur Maclocks ↗</a>`
+};
+
+// --- P. iPAD PRO, BORNE SPACE KIOSK & APPLE PENCIL PRO (Nouvel ajout fusionné) ---
+const ipadProObjectsList = [
+  "object_234", "object_236", "object_237", "object_238", "object_239"
+];
+
+const ipadProData = {
+    title: "Apple iPad Pro, Kiosque Space & Apple Pencil Pro",
+    desc: `Tablette professionnelle iPad Pro ultra-puissante installée de manière sécurisée dans un kiosque de protection Space Enclosure Maclocks. Cet ensemble de régie haut de gamme est complété par l'Apple Pencil Pro, idéal pour l'édition de partitions numériques, le dessin technique ou les commandes DAW tactiles micrométriques.<br><br>
+          <a href="https://www.apple.com/fr/ipad-pro/" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Découvrir l'iPad Pro sur Apple ↗</a><br>
+          <a href="https://www.maclocks.eu/fr/space-ipad-enclosure-kiosk.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir la Borne Kiosque Space sur Maclocks ↗</a><br>
+          <a href="https://www.apple.com/fr/shop/product/mx2d3zm/a/apple-pencil-pro" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'Apple Pencil Pro sur l'Apple Store ↗</a>`
+};
+
+// --- Q. RECHERCHE AUTOMATIQUE / MOTS-CLÉS (Éléments restants) ---
 const studioStudioData = [
     {
         keywords: ["graphictablet", "desk", "screen", "bureau", "jarre"],
@@ -354,6 +379,8 @@ function getObjectData(nameLower) {
     if (shureMicObjectsList.includes(nameLower)) return shureMicData;
     if (cherryKeyboardObjectsList.includes(nameLower)) return cherryKeyboardData;
     if (netwalkerStandObjectsList.includes(nameLower)) return netwalkerStandData;
+    if (galaxyTabObjectsList.includes(nameLower)) return galaxyTabData;
+    if (ipadProObjectsList.includes(nameLower)) return ipadProData;
 
     for (const item of studioStudioData) {
         if (item.keywords.some(kw => nameLower.includes(kw))) {
