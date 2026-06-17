@@ -147,7 +147,7 @@ const micData = {
           </a>`
 };
 
-// --- E. CASQUE AUDIO APPLE AIRPODS MAX (Mis à jour et enrichi) ---
+// --- E. CASQUE AUDIO APPLE AIRPODS MAX ---
 const headphoneObjectsList = [
   "aanwpkmfljrfwqj", "aexpvrshrbaarooz", "bnozvcafckcmanz", "djdgbrevlkseknl", 
   "fzpyptjpuzbycjw", "huobrxkxkekuwxx", "huxnidmrqhpdtej", "ihefvqmczhpaduy", 
@@ -171,7 +171,7 @@ const headphoneData = {
           </a>`
 };
 
-// --- F. APPLE iPHONE 15 PRO ---
+// --- F. APPLE iPHONE 15 PRO (Nettoyé des objets 78-89) ---
 const phoneObjectsList = [
   "object_101001", "object_105", "object_107001", "object_110001", "object_11001", 
   "object_112", "object_114001", "object_116001", "object_118001", "object_120001", 
@@ -188,9 +188,9 @@ const phoneObjectsList = [
   "object_35001", "object_37", "object_39", "object_41001", "object_44002", 
   "object_47001", "object_49", "object_51001", "object_53001", "55001", 
   "object_57001", "object_59002", "object_62002", "object_64", "object_67", 
-  "object_69001", "object_71002", "object_73001", "object_76", "object_78001", 
-  "object_81", "object_83002", "object_85001", "object_87", "object_90", 
-  "object_92001", "object_94", "object_96", "object_98002"
+  "object_69001", "object_71002", "object_73001", "object_76", "object_81", 
+  "object_83002", "object_85001", "object_87", "object_90", "object_92001", 
+  "object_94", "object_96", "object_98002"
 ];
 
 const phoneData = {
@@ -319,7 +319,7 @@ const netwalkerStandData = {
           </a>`
 };
 
-// --- O. TABLETTE GALAXY TAB A9 & PORTABLE GLIDETAB (Nouvel ajout) ---
+// --- O. TABLETTE GALAXY TAB A9 & PORTABLE GLIDETAB ---
 const galaxyTabObjectsList = [
   "object_228", "object_230", "object_231", "object_232"
 ];
@@ -331,7 +331,7 @@ const galaxyTabData = {
           <a href="https://www.maclocks.eu/fr/glidetab.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Support Glidetab sur Maclocks ↗</a>`
 };
 
-// --- P. iPAD PRO, BORNE SPACE KIOSK & APPLE PENCIL PRO (Nouvel ajout fusionné) ---
+// --- P. iPAD PRO, BORNE SPACE KIOSK & APPLE PENCIL PRO ---
 const ipadProObjectsList = [
   "object_234", "object_236", "object_237", "object_238", "object_239"
 ];
@@ -344,7 +344,37 @@ const ipadProData = {
           <a href="https://www.apple.com/fr/shop/product/mx2d3zm/a/apple-pencil-pro" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir l'Apple Pencil Pro sur l'Apple Store ↗</a>`
 };
 
-// --- Q. RECHERCHE AUTOMATIQUE / MOTS-CLÉS (Éléments restants) ---
+// --- Q. ÉCRAN SECONDAIRE PC & TRÉPIED DE POSTE JPG (Nouvel ajout) ---
+const jpgScreenObjectsList = [
+  "object_78", "object_80", "object_82", "object_83", "object_85", "object_86", "object_88", "object_89"
+];
+
+const jpgScreenData = {
+    title: "Écran d'affichage PC avec Trépied de Table JPG",
+    desc: `Moniteur additionnel de retour informatique monté sur un trépied de table ajustable de chez JPG. Il offre un espace d'affichage idéal pour surveiller ses pistes d'automation, ses plugins ou ses scripts de production en cours.<br><br>
+          <a href="https://www.jpg.fr/postes-informatiques_sku01165-00J.html" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir l'équipement sur JPG ↗
+          </a>`
+};
+
+// --- R. BRAS ARTICULÉ POUR MICROPHONE K&M 23868 (Nouvel ajout) ---
+const kmMicArmObjectsList = [
+  "object_19", "object_20", "object_22", "object_25", "object_26", "object_28", "object_30", "object_32"
+];
+
+const kmMicArmData = {
+    title: "Bras de Table pour Micro K&M 23868",
+    desc: `Bras de bureau articulé haut de gamme König & Meyer, conçu pour supporter de manière ultra-fluide et silencieuse des microphones de studio professionnels. Permet un positionnement parfait sans transmission de vibrations parasites.<br><br>
+          <a href="https://www.thomann.fr/km_23868_microphone_desk_arm.htm" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir le bras K&M sur Thomann ↗
+          </a>`
+};
+
+// --- S. RECHERCHE AUTOMATIQUE / MOTS-CLÉS (Éléments restants) ---
 const studioStudioData = [
     {
         keywords: ["graphictablet", "desk", "screen", "bureau", "jarre"],
@@ -381,6 +411,8 @@ function getObjectData(nameLower) {
     if (netwalkerStandObjectsList.includes(nameLower)) return netwalkerStandData;
     if (galaxyTabObjectsList.includes(nameLower)) return galaxyTabData;
     if (ipadProObjectsList.includes(nameLower)) return ipadProData;
+    if (jpgScreenObjectsList.includes(nameLower)) return jpgScreenData;
+    if (kmMicArmObjectsList.includes(nameLower)) return kmMicArmData;
 
     for (const item of studioStudioData) {
         if (item.keywords.some(kw => nameLower.includes(kw))) {
