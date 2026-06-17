@@ -38,7 +38,7 @@ const mouse = new THREE.Vector2();
 let selectableObjects = [];
 
 // =========================================================================
-// 4. BASE DE DONNÉES COMPLÈTE DU STUDIO (AVEC TOUS LES LIENS)
+// 4. BASE DE DONNÉES COMPLÈTE DU STUDIO (AVEC TES CORRESPONDANCES UNIQUES)
 // =========================================================================
 
 // --- A. LA BATTERIE (Ta liste exacte validée) ---
@@ -93,17 +93,47 @@ const drumData = {
           </a>`
 };
 
-// --- B. LES AUTRES ÉLÉMENTS DU STUDIO ---
+// --- B. LES ENCEINTES KRK KREATE 5 (Ta liste exacte validée) ---
+const speakerObjectsList = [
+  "object_126", "object_135", "object_136", "object_137", "object_138", 
+  "object_140", "object_149", "object_150", "object_151", "object_152"
+];
+
+const speakerData = {
+    title: "KRK Kreate 5 (La Paire)",
+    desc: `Enceintes de monitoring actives d'une clarté légendaire. Conçues avec un woofer en Kevlar et un tweeter performant pour une fidélité sonore optimale lors de la production, du mixage ou de l'écoute critique en studio.<br><br>
+          <a href="https://www.sonovente.com/krk-kreate-5-la-paire-supports-bas-p106242.html" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Découvrir sur SonoVente ↗
+          </a>`
+};
+
+// --- C. LES PIEDS D'ENCEINTES (Ta liste exacte validée) ---
+const standObjectsList = [
+  "object_135003", "object_136005", "object_137006", "object_138004", 
+  "studiomonitorstand_studiomonitorstand_metal_0", "studiomonitorstand_studiomonitorstand_plastic_0", 
+  "object_135004", "object_136007", "object_137007", "object_138005", 
+  "studiomonitorstand_studiomonitorstand_metal_0001", "studiomonitorstand_studiomonitorstand_plastic_0001", 
+  "studiomonitorstand_studiomontiorstand_cushion_0001", "studiomonitorstand_studiomontiorstand_cushion_0"
+];
+
+const standData = {
+    title: "Supports de Moniteurs Studio",
+    desc: `Pieds de studio robustes ajustables avec plateaux isolants. Ils permettent de surélever les enceintes KRK à hauteur d'oreille tout en absorbant les vibrations parasites du bureau.<br><br>
+          <a href="https://www.sonovente.com/krk-kreate-5-la-paire-supports-bas-p106242.html" 
+             target="_blank" 
+             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
+             Voir le pack sur SonoVente ↗
+          </a>`
+};
+
+// --- D. TEXTES GÉNÉRIQUES (Recherche intelligente pour le reste) ---
 const studioStudioData = [
     {
         keywords: ["graphictablet", "desk", "screen", "bureau", "jarre"],
         title: "La Jarre à Son - Home Studio Desk 2023",
         desc: "Le meuble central du studio de production musicale, doté d'une ergonomie poussée avec sa tablette graphique intégrée et ses supports d'enceintes surélevés.<br><br><a href='https://sketchfab.com/3d-models/la-jarre-a-son-home-studio-desk-2023-538fdc1dc1c1478da6a2761ec3c6dcab' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir sur Sketchfab ↗</a>"
-    },
-    {
-        keywords: ["speaker", "enceinte", "monitor", "krk", "yamaha"],
-        title: "KRK ROKIT 5 G4",
-        desc: "Enceintes de monitoring de studio actives professionnelles. Parfaites pour obtenir un mixage précis et clair grâce à leur égalisation graphique pilotée par DSP.<br><br><a href='https://www.thomann.fr/krk_rokit_rp5_g4.htm' target='_blank' style='color:#00d2ff;font-weight:600;'>Voir sur Thomann ↗</a>"
     },
     {
         keywords: ["headphone", "casque", "audiotechnica", "beyer", "audio-technica"],
@@ -128,9 +158,12 @@ const studioStudioData = [
 ];
 
 function getObjectData(nameLower) {
-    if (drumObjectsList.includes(nameLower)) {
-        return drumData;
-    }
+    // 1. Tests des listes d'IDs exacts
+    if (drumObjectsList.includes(nameLower)) return drumData;
+    if (speakerObjectsList.includes(nameLower)) return speakerData;
+    if (standObjectsList.includes(nameLower)) return standData;
+
+    // 2. Recherche par mot-clé large
     for (const item of studioStudioData) {
         if (item.keywords.some(kw => nameLower.includes(kw))) {
             return item;
@@ -174,7 +207,7 @@ loader.load(
 );
 
 // =========================================================================
-// 6. LE SCANNER DE SCÈNE (OUTIL DÉPLACÉ EN BAS À DROITE)
+// 6. LE SCANNER DE SCÈNE (PLUGUÉ EN BAS À DROITE)
 // =========================================================================
 
 const selectionBox = new SelectionBox(camera, scene);
@@ -183,7 +216,7 @@ const helper = new SelectionHelper(renderer, 'selectBox');
 const namesPanel = document.createElement('div');
 namesPanel.id = 'extraction-panel';
 namesPanel.style.position = 'absolute';
-namesPanel.style.bottom = '20px'; // Placé tout en bas à droite pour laisser le haut libre !
+namesPanel.style.bottom = '20px';
 namesPanel.style.right = '20px';
 namesPanel.style.width = '320px';
 namesPanel.style.maxHeight = '40vh';
