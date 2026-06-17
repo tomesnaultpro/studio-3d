@@ -36,108 +36,15 @@ scene.add(camera);
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-// LISTE NOIRE : Les objets de décor (sol, murs) totalement ignorés au clic
-const ignoredObjects = ["fond_lateral", "sol", "cube001"];
 let selectableObjects = [];
 
 // =========================================================================
-// 4. LISTES DES OBJETS ET CONTENUS DE TON STUDIO
+// 4. BASE DE DONNÉES DU STUDIO (ON RECOMMENCE À ZÉRO)
 // =========================================================================
 
-// --- A. ENCEINTES KRK ---
-const krkObjectsList = [
-    "object_150", "object_151", "object_149", "object_152", "object_135", 
-    "object_136", "object_137", "object_138", "object_136005", "object_135003", 
-    "object_135004", "object_135006", "object_135007", "object_137007", 
-    "object_136007", "object_138005", "object_138004", "object_137006"
-];
-const krkData = {
-    title: "KRK Classic 5 Monitor Pack",
-    desc: `Enceintes de monitoring professionnelles actives de 5 pouces, idéales pour un rendu sonore ultra-précis lors du mixage et de la production musicale.<br><br>
-          <a href="https://www.amazon.fr/KRK-Classic-5-Monitor-Pack/dp/B0CN3XC58B/" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le produit sur Amazon ↗
-          </a>`
-};
+// --- LA BATTERIE (Pearl Roadshow) ---
+const drumKeywords = ["branco", "circle", "prato", "peli"];
 
-// --- B. LE CANAPÉ ---
-const sofaObjectsList = [
-    "box009", "gray_fabric", "line009", "cylinder001", "sienna", "line010", "line002", "line001"
-];
-const sofaData = {
-    title: "Canapé Convertible",
-    desc: `Un superbe canapé-lit confortable et au design épuré, parfait pour se détendre entre deux sessions d'enregistrement ou accueillir des artistes au studio.<br><br>
-          <a href="https://www.habitat.fr/c/canapes-convertibles?pid=122677" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le produit sur Habitat ↗
-          </a>`
-};
-
-// --- C. LES COUSSINS ---
-const pillowObjectsList = [
-    "pillow_01", "pillow_002"
-];
-const pillowData = {
-    title: "Coussin olario orange",
-    desc: `Coussin en coton texture de dimensions 60x60 cm. Sa couleur orange vibrante apporte une touche chaleureuse, moderne et colorée au canapé du studio.<br><br>
-          <a href="https://www.maisonsdumonde.com/FR/fr/p/coussin-en-coton-texture-orange-60x60-olario-247807.htm" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le produit sur Maisons du Monde ↗
-          </a>`
-};
-
-// --- D. LA CHAISE DE BUREAU ---
-const chairObjectsList = [
-    "chair_material"
-];
-const chairData = {
-    title: "Chaise de bureau Atlas",
-    desc: `Siège de bureau professionnel ergonomique équipé d'un revêtement en tissu, d'accoudoirs réglables, d'un soutien lombaire et d'un mécanisme synchrone pour un confort optimal durant les longues heures de production.<br><br>
-          <a href="https://www.bruneau.fr/product/chaise-bureau-atlas-tissu-accoudoirs-soutien-lombaire-mecanisme-synchrone-reglage-profondeur-assise-pieds-noir/704754?references=704755" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le produit sur Bruneau ↗
-          </a>`
-};
-
-// --- E. LE BUREAU DE PRODUCTION ---
-const deskObjectsList = [
-    "object_4", "object_6", "object_68", "object_69"
-];
-const deskData = {
-    title: "Bureau double caisson noir Tikimob",
-    desc: `Bureau sur mesure robuste de couleur noire avec double caisson de rangement, idéal pour un setup de production propre, épuré et bien organisé.<br><br>
-          <a href="https://www.tikimob.fr/meubles-et-accessoires/tikimodeles/bureau_f/bureau-sur-mesure-double-caisson-couleur-noir/?gad_source=1&gad_campaignid=14724494636&gclid=Cj0KCQjwornRBhCrARIsAON5exHB3lFV8beacGWiKrjQ0UDpfZuUMZPnjaTgoB2TxBEYDY4qkhUdinAaAvt4EALw_wcB" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le produit sur tikimob
-          </a>`
-};
-
-// --- F. LE CASQUE AUDIO AirPods Max ---
-const rawHeadphoneObjects = [
-    "sYukhlwqwHfYqZA", "TOVOhyqeZChyzGL", "ZCzOLIfJLVLCTmq", "WWtYjswGShSaNES", 
-    "AANWpKMFljrFwQj", "AExPvRSHRbARooZ", "QVkyuxLuHiwiZGe", "YgRsyUXVGXLGGRO", 
-    "BNOZVCaFckcMAnz", "PNdaALJHbSHKuWS", "YmaGKZDKmTWUQJE", "WDmISGpfbmqrdOh", 
-    "FZPYptjpUzbYCJW", "XiPhiAhstHJZhhW", "lTnuLeUWbsqYabK", "sYTnpMcquiOFLQg", 
-    "eCeBBpFGKsspUio"
-];
-const headphoneObjectsList = rawHeadphoneObjects.map(name => name.toLowerCase().trim());
-
-const headphoneData = {
-    title: "AirPods Max",
-    desc: `Casque audio sans fil circum-auriculaire Apple offrant une restitution sonore haute fidélité, une réduction active du bruit de pointe et un mode transparence immersif.<br><br>
-          <a href="https://www.apple.com/fr/shop/buy-airpods/airpods-max-2/bleu" 
-             target="_blank" 
-             style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
-             Voir le produit sur Apple ↗
-          </a>`
-};
-
-// --- G. PANEL DE LA BATTERIE (Pearl Roadshow) ---
 const drumData = {
     title: "Pearl Roadshow 22\" Plus Jet Black",
     desc: `Batterie acoustique complète de la série Roadshow, idéale pour les batteurs exigeants. Elle comprend des fûts robustes en peuplier, un accastillage complet et des cymbales pour un punch et une résonance remarquables au studio.<br><br>
@@ -147,6 +54,16 @@ const drumData = {
              Voir le produit sur Thomann ↗
           </a>`
 };
+
+// Vérification si l'ID numérique de la pièce gltf correspond à la batterie
+function checkDrumNumber(nameLower) {
+    const match = nameLower.match(/object_(\d+)/);
+    if (match) {
+        const num = parseInt(match[1], 10);
+        return (num >= 1700 && num <= 2000);
+    }
+    return false;
+}
 
 // =========================================================================
 
@@ -178,18 +95,13 @@ loader.load(
         camera.position.set(maxDim * 0.3, maxDim * 0.6, cameraZ);
         controls.target.set(0, 0, 0);
 
-        // Tri des objets cliquables
+        // Tous les meshes deviennent cibles potentielles
         model.traverse((child) => {
             if (child.isMesh) {
-                const meshNameLower = child.name.toLowerCase();
-                const isIgnored = ignoredObjects.some(ignored => meshNameLower.includes(ignored));
-                
-                if (!isIgnored) {
-                    selectableObjects.push(child);
-                }
+                selectableObjects.push(child);
             }
         });
-        console.log("Scène chargée. Détection optimisée batterie active !");
+        console.log("Nouveau système initialisé. Batterie prête !");
     },
     undefined,
     (error) => {
@@ -209,50 +121,26 @@ function handleInteraction(clientX, clientY) {
         let hitObject = intersects[0].object;
         let current = hitObject;
         let finalData = null;
-        let isKnownFurniture = false;
 
-        // ÉTAPE 1 : On remonte la hiérarchie pour tester si on touche un meuble connu du studio
+        // On remonte l'arborescence pour voir si on touche la batterie
         while (current && current !== scene) {
             let nameLower = current.name.toLowerCase().trim();
             
-            if (deskObjectsList.some(item => nameLower.includes(item))) {
-                finalData = deskData;
-                isKnownFurniture = true;
-                break;
-            } else if (krkObjectsList.some(item => nameLower.includes(item))) {
-                finalData = krkData;
-                isKnownFurniture = true;
-                break;
-            } else if (sofaObjectsList.some(item => nameLower.includes(item))) {
-                finalData = sofaData;
-                isKnownFurniture = true;
-                break;
-            } else if (pillowObjectsList.some(item => nameLower.includes(item))) {
-                finalData = pillowData;
-                isKnownFurniture = true;
-                break;
-            } else if (chairObjectsList.some(item => nameLower.includes(item))) {
-                finalData = chairData;
-                isKnownFurniture = true;
-                break;
-            } else if (headphoneObjectsList.some(item => nameLower.includes(item))) {
-                finalData = headphoneData;
-                isKnownFurniture = true;
+            if (drumKeywords.some(keyword => nameLower.includes(keyword)) || checkDrumNumber(nameLower)) {
+                finalData = drumData;
                 break;
             }
             current = current.parent;
         }
 
-        // ÉTAPE 2 : Si ce n'est aucun des meubles ci-dessus, alors l'objet cliqué appartient à la batterie
-        if (!isKnownFurniture) {
-            finalData = drumData;
-        }
-
-        // Affichage dynamique dans le panneau HTML
+        // Affichage du panel
         if (finalData) {
             document.getElementById('info-title').innerText = finalData.title;
             document.getElementById('info-description').innerHTML = finalData.desc;
             document.getElementById('info-box').classList.add('active');
+        } else {
+            // Pour le moment, si ce n'est pas la batterie, on ferme ou on ne fait rien
+            document.getElementById('info-box').classList.remove('active');
         }
     } else {
         document.getElementById('info-box').classList.remove('active');
