@@ -254,7 +254,7 @@ const cameraObjectsList = [
 
 const cameraData = {
     title: "Sony Alpha 7 III & Bras Magique SmallRig",
-    desc: `Caméra hybride plein format hautes performances associée à un objectif 28-70mm, suspendue solidement by un bras magique articulé SmallRig (11"). Parfait pour capturer des vidéos de qualité professionnelle en régie ou filmer des sessions de podcast.<br><br>
+    desc: `Caméra hybride plein format hautes performances associée à un objectif 28-70mm, suspendue solidement par un bras magique articulé SmallRig (11"). Parfait pour capturer des vidéos de qualité professionnelle en régie ou filmer des sessions de podcast.<br><br>
           <a href="https://www.digit-photo.com/SONY-Alpha-7-III-28-70mm-f-3-5-5-6-SEL-rSONYILCE7M3KBCEC.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir la Caméra sur Digit-Photo ↗</a><br>
           <a href="https://www.digit-photo.com/SMALLRIG-5309-Support-Bras-Magique-11-rSMALLRIG5309.html" target="_blank" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Voir le Bras SmallRig sur Digit-Photo ↗</a>`
 };
@@ -431,13 +431,13 @@ const neutrikPatchbayData = {
           </a>`
 };
 
-// --- W. PREAMP MULTI-CANAUX FOCUSRITE SCARLETT OCTOPRE DYNAMIC - UNITÉ ÉTAGE 1 (Remplacement effectué !) ---
+// --- W. PREAMP MULTI-CANAUX FOCUSRITE SCARLETT OCTOPRE DYNAMIC ---
 const octopre1ObjectsList = [
   "object_175", "object_176"
 ];
 
 const octopre1Data = {
-    title: "Focusrite Scarlett OctoPre Dynamic (Unité 1)",
+    title: "Focusrite Scarlett OctoPre Dynamic",
     desc: `Préamplificateur micro à 8 canaux hautes performances doté d'un compresseur analogique transparent de type "Soft-Knee" par canal. Il gère idéalement la dynamique des instruments percutants et assure une conversion AN/NA irréprochable en ADAT.<br><br>
           <a href="https://www.bax-shop.fr/preamplis-micro/focusrite-scarlett-octopre-dynamic-preampli" 
              target="_blank" 
@@ -446,14 +446,14 @@ const octopre1Data = {
           </a>`
 };
 
-// --- X. PREAMP MULTI-CANAUX FOCUSRITE SCARLETT OCTOPRE - UNITÉ ÉTAGE 2 ---
+// --- X. PREAMP MULTI-CANAUX FOCUSRITE SCARLETT OCTOPRE ---
 const octopre2ObjectsList = [
   "object_178", "object_179", "object_180"
 ];
 
 const octopre2Data = {
-    title: "Focusrite Scarlett OctoPre (Unité 2)",
-    desc: `Seconde unité de préamplification Scarlett OctoPre montée en série. Elle double la capacité d'acquisition en étendant la régie à 16 préamplis micro Focusrite simultanés câblés en ADAT pour la capturation complète et multipiste d'une batterie acoustique.<br><br>
+    title: "Focusrite Scarlett OctoPre",
+    desc: `Préamplificateur micro à 8 canaux de haute qualité intégrant des convertisseurs AN/NA de précision 24 bits / 192 kHz et une connectique ADAT optique. Idéal pour étendre les entrées de la régie pour des sessions d'enregistrement de groupe ou de batterie.<br><br>
           <a href="https://www.thomann.fr/focusrite_scarlett_octopre.htm" 
              target="_blank" 
              style="color: #00d2ff; text-decoration: underline; font-weight: 600;">
