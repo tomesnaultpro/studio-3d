@@ -39,10 +39,10 @@ const mouse = new THREE.Vector2();
 let selectableObjects = [];
 
 // =========================================================================
-// 4. BASE DE DONNÉES DU STUDIO (ON RECOMMENCE À ZÉRO)
+// 4. BASE DE DONNÉES DU STUDIO (REPARTI À ZÉRO - UNIQUEMENT LA BATTERIE)
 // =========================================================================
 
-// --- LA BATTERIE (Pearl Roadshow) ---
+// Mots-clés textuels présents dans ton fichier GLTF pour la batterie
 const drumKeywords = ["branco", "circle", "prato", "peli"];
 
 const drumData = {
@@ -55,13 +55,21 @@ const drumData = {
           </a>`
 };
 
-// Vérification si l'ID numérique de la pièce gltf correspond à la batterie
-function checkDrumNumber(nameLower) {
+// Fonction de détection par plage numérique exacte (vérifiée dans ton GLTF)
+function isDrumMesh(nameLower) {
+    // 1. Vérification des mots-clés textuels (ex: BRANCO.436, Circle.150...)
+    if (drumKeywords.some(keyword => nameLower.includes(keyword))) {
+        return true;
+    }
+    
+    // 2. Vérification des numéros de maillages bruts (ex: Object_1787, Object_1790...)
     const match = nameLower.match(/object_(\d+)/);
     if (match) {
         const num = parseInt(match[1], 10);
+        // Dans ton GLTF, la batterie occupe toute la plage du bloc supérieur (1700 à 2000)
         return (num >= 1700 && num <= 2000);
     }
+    
     return false;
 }
 
@@ -79,7 +87,7 @@ loader.load(
         const model = gltf.scene;
         scene.add(model);
 
-        // Centrage automatique
+        // Centrage automatique du modèle
         const box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
@@ -95,17 +103,17 @@ loader.load(
         camera.position.set(maxDim * 0.3, maxDim * 0.6, cameraZ);
         controls.target.set(0, 0, 0);
 
-        // Tous les meshes deviennent cibles potentielles
+        // Ajout de tous les maillages de la pièce à la liste cliquable
         model.traverse((child) => {
             if (child.isMesh) {
                 selectableObjects.push(child);
             }
         });
-        console.log("Nouveau système initialisé. Batterie prête !");
+        console.log("Nouveau système propre initialisé. Détection de la batterie corrigée !");
     },
     undefined,
     (error) => {
-        console.error("Erreur de chargement :", error);
+        console.error("Erreur de chargement du modèle :", error);
     }
 );
 
@@ -122,24 +130,24 @@ function handleInteraction(clientX, clientY) {
         let current = hitObject;
         let finalData = null;
 
-        // On remonte l'arborescence pour voir si on touche la batterie
+        // On remonte l'arborescence de l'objet cliqué pour valider son identifiant
         while (current && current !== scene) {
             let nameLower = current.name.toLowerCase().trim();
             
-            if (drumKeywords.some(keyword => nameLower.includes(keyword)) || checkDrumNumber(nameLower)) {
+            if (isDrumMesh(nameLower)) {
                 finalData = drumData;
                 break;
             }
             current = current.parent;
         }
 
-        // Affichage du panel
+        // Affichage dynamique dans le volet d'information HTML
         if (finalData) {
             document.getElementById('info-title').innerText = finalData.title;
             document.getElementById('info-description').innerHTML = finalData.desc;
             document.getElementById('info-box').classList.add('active');
         } else {
-            // Pour le moment, si ce n'est pas la batterie, on ferme ou on ne fait rien
+            // Si on clique sur un autre élément pas encore configuré (murs, sol, etc.), on ferme le panel
             document.getElementById('info-box').classList.remove('active');
         }
     } else {
